@@ -1,0 +1,14 @@
+from PIL import Image
+
+# pixel indices
+r = 0
+b = 1
+g = 2
+
+colors = []
+
+im = Image.open("images/light_bike.png")
+pixels = list(im.getdata())
+width, height = im.size
+
+

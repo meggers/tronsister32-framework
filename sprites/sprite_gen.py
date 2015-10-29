@@ -5,6 +5,7 @@ from PIL import Image
 from os import listdir
 from os.path import isfile, join
 
+memory_size = 2048
 image_folder = "images/"
 sprite_size = 8
 colors = {
@@ -65,6 +66,12 @@ for sprite in sprites:
 
         sprite_memory.append("".join(decomposed_bytes))
 
+if len(sprite_memory) > memory_size:
+    print "Too many sprites!"
+    print "You have {0} sprites, but the max is {1}".format(len(sprite_memory) / sprite_size, memory_size / sprite_size)
+    print "Aborting..."
+else:
+    print "Generating {0} sprites of a maximum {1} sprites".format(len(sprite_memory) / sprite_size, memory_size / sprite_size)
 output = open("sprite_memory.coe", 'w')
 output.truncate()
 output.write("memory_initialization_radix=2;\nmemory_initialization_vector=\n")

@@ -70,8 +70,12 @@ if len(sprite_memory) > memory_size:
     print "Too many sprites!"
     print "You have {0} sprites, but the max is {1}".format(len(sprite_memory) / sprite_size, memory_size / sprite_size)
     print "Aborting..."
+    sys.exit(1)
 else:
     print "Generating {0} sprites of a maximum {1} sprites".format(len(sprite_memory) / sprite_size, memory_size / sprite_size)
+    for _ in range(memory_size - len(sprite_memory)):
+        sprite_memory.append("0000000000000000")
+
 output = open("sprite_memory.coe", 'w')
 output.truncate()
 output.write("memory_initialization_radix=2;\nmemory_initialization_vector=\n")

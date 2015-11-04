@@ -24,6 +24,8 @@ colors = {
 image_files = [ f for f in listdir(image_folder) if isfile(join(image_folder,f)) ]
 
 sprites = []
+sprite_parts = []
+sprite_index = 0
 for image_file in image_files:
     im = Image.open(image_folder + image_file)
     pixel_width, pixel_height = im.size
@@ -50,6 +52,10 @@ for image_file in image_files:
 
     # block pixels into sprites
     sprites = sprites + blockshaped(pixels, sprite_size, sprite_size).tolist()
+
+    # save off sprite names for csv dump used by assembler
+    sprite_parts.append("s_{0},{1},{2},{3}".format(image_file.split('.')[0], sprite_index, pixel_height / sprite_size, pixel_width / sprite_size))
+    sprite_index += (pixel_height / sprite_size) * (pixel_width / sprite_size)
 
 sprite_memory = []
 for sprite in sprites:
@@ -81,4 +87,10 @@ output.truncate()
 output.write("memory_initialization_radix=2;\nmemory_initialization_vector=\n")
 output.write(",\n".join(sprite_memory))
 output.write(";")
-output.close
+output.close()
+
+output = open("../common/sprite_definitions.csv", 'w')
+output.truncate()
+output.write("name,index,height,width\n")
+output.write("\n".join(sprite_parts))
+output.close()

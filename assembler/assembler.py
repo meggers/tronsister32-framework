@@ -9,7 +9,7 @@ from parse import *
 
 opcodes = {}
 data = DataWarehouse()
-BYTE_ADDRESS = 4
+address_increment = 1
 
 def read(program):
     global data
@@ -19,12 +19,23 @@ def read(program):
 
     for line in program:
         try:
+            # try parsing instruction
             instruction = Line(current_address, line)
+
+            # if instructions would overflow into data, exit
+            if current_address >= data.data_address:
+                print "Instruction Overflow. Please use fewer instructions or allocate more space for it."
+                sys.exit(1)
+
+            # add instruction to instructions list
             instructions.append(instruction)
-            if (hasattr(instruction, 'label')):
+
+            # if it has a label, add (label => address) to lookup table
+            if hasattr(instruction, 'label'):
                 data.lookup_table[instruction.label] = current_address
 
-            current_address += BYTE_ADDRESS
+            # increment address
+            current_address += address_increment
 
         # We didn't get anything on this line, ignore
         except EmptyLine:
@@ -35,8 +46,8 @@ def read(program):
             # make sure we have space for this data
             byte_size = math.ceil(len(directive.value) / 2)
             allocated_end_address = current_address + byte_size
-            if (allocated_end_address >= data.instructions_address):
-                print "Data Overflow. Please use less data or allocate more space for it"
+            if (allocated_end_address >= data.game_tick_address):
+                print "Data Overflow. Please use less data or allocate more space for it."
                 sys.exit(1)
 
             # add data to lookup table
@@ -47,7 +58,7 @@ def read(program):
                 current_value += character
                 if len(current_value) == 8:
                     instructions.append(Line(current_address, None, current_value))
-                    current_address += BYTE_ADDRESS
+                    current_address += address_increment
                     current_value = ""
 
             # set overflow value

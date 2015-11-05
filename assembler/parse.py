@@ -50,7 +50,11 @@ class DataWarehouse(object):
     spr_file = "common/sprite-definitions.csv"
 
     instructions_address = int('0x000', 16)
-    data_address = int('0x400', 16)
+    data_address         = int('0x400', 16)
+    game_tick_address    = int('0xBFD', 16)
+    keyboard_address     = int('0xBFE', 16)
+    stack_ov_address     = int('0xBFF', 16)
+    stack_address        = int('0xC00', 16)
 
     lookup_table = {}
     instruction_set = {}

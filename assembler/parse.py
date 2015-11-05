@@ -44,12 +44,13 @@ def singleton(cls):
 @singleton
 class DataWarehouse(object):
 
-    reg_file = "../common/reg-definitions.csv"
-    isa_file = "../common/isa-definitions.csv"
-    fmt_file = "../common/format-definitions.csv"
+    reg_file = "common/reg-definitions.csv"
+    isa_file = "common/isa-definitions.csv"
+    fmt_file = "common/format-definitions.csv"
+    spr_file = "common/sprite-definitions.csv"
 
-    data_address = int('0x000', 16)
-    instructions_address = int('0x800', 16)
+    instructions_address = int('0x000', 16)
+    data_address = int('0x400', 16)
 
     lookup_table = {}
     instruction_set = {}
@@ -80,6 +81,14 @@ class DataWarehouse(object):
                     "type": format_parts[2],
                     "width": format_parts[3]
                 })
+
+        with open(self.spr_file) as f:
+            lines = f.readlines()
+            for line in lines[1:]:
+                sprite_parts = line.rstrip().split(',')
+                self.lookup_table[sprite_parts[0] + "_index"]  = sprite_parts[1]
+                self.lookup_table[sprite_parts[0] + "_height"] = sprite_parts[2]
+                self.lookup_table[sprite_parts[0] + "_width"]  = sprite_parts[3]
 
 class Line(object):
 

@@ -6,7 +6,7 @@ from os import listdir
 from os.path import isfile, join
 
 memory_size = 2048
-image_folder = "images/"
+image_folder = "sprites/images/foreground/"
 sprite_size = 8
 colors = {
     (  0,   0,   0, 255): (0,0),
@@ -54,7 +54,7 @@ for image_file in image_files:
     sprites = sprites + blockshaped(pixels, sprite_size, sprite_size).tolist()
 
     # save off sprite names for csv dump used by assembler
-    sprite_parts.append("s_{0},{1},{2},{3}".format(image_file.split('.')[0], sprite_index, pixel_height / sprite_size, pixel_width / sprite_size))
+    sprite_parts.append("{0},{1},{2},{3}".format(image_file.split('.')[0], sprite_index, pixel_height / sprite_size, pixel_width / sprite_size))
     sprite_index += (pixel_height / sprite_size) * (pixel_width / sprite_size)
 
 sprite_memory = []
@@ -89,7 +89,7 @@ output.write(",\n".join(sprite_memory))
 output.write(";")
 output.close()
 
-output = open("../common/sprite_definitions.csv", 'w')
+output = open("common/sprite-definitions.csv", 'w')
 output.truncate()
 output.write("name,index,height,width\n")
 output.write("\n".join(sprite_parts))

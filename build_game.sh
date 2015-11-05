@@ -4,7 +4,7 @@
 set -e
 
 # start virtualenv
-echo "Starting virtual environment"
+echo "Starting virtual environment..."
 source venv/bin/activate
 
 # install all python dependencies
@@ -23,4 +23,8 @@ python sprites/sprite_gen.py
 echo "Assembling program..."
 python assembler/assembler.py -i $1 -o $2
 
-echo "Game build successfully. Exiting..."
+echo "Game build successful."
+echo "Deactivating virtual environment"
+deactivate
+
+echo "Exiting."

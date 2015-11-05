@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# stop build script if any step fails
+set -e
+
 # start virtualenv
 echo "Starting virtual environment"
 source venv/bin/activate

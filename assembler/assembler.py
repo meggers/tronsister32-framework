@@ -14,16 +14,20 @@ address_increment = 1
 def read(program):
     global data
 
-    instructions = []
-    current_address = data.data_address
+    # initialize memory segments
+    instructions    = []
+    heap            = []
+    interrupts      = []
+    stack           = [Line() for _ in range(data.end_of_memory - data.stack_address)]
 
+    current_address = data.heap_address
     for line in program:
         try:
             # try parsing instruction
-            instruction = Line(current_address, line)
+            instruction = Line(line)
 
             # if instructions would overflow into data, exit
-            if current_address >= data.data_address:
+            if current_address >= data.heap_address:
                 print "Instruction Overflow. Please use fewer instructions or allocate more space for it."
                 sys.exit(1)
 
@@ -57,25 +61,38 @@ def read(program):
             for character in directive.value:
                 current_value += character
                 if len(current_value) == 8:
-                    instructions.append(Line(current_address, None, current_value))
+                    heap.append(Line(None, current_value))
                     current_address += address_increment
                     current_value = ""
 
             # set overflow value
             overflow_length = len(current_value)
             current_value = ("0" * (8 - overflow_length)) + current_value
-            instructions.append(Line(current_address, None, current_value))
+            heap.append(Line(None, current_value))
 
         # instruction directive found, start writing in instruction section
         except StartInstructions:
-
-            # pad rest of data section
-            for address in range(current_address, data.instructions_address):
-                instructions.append(Line(address))
-
             current_address = data.instructions_address
 
-    return instructions
+    # pad instruction section
+    instructions_end = data.instructions_address + len(instructions)
+    for _ in range(instructions_end, data.heap_address):
+        instructions.append(Line())
+
+    # pad data section
+    heap_end = data.heap_address + len(heap)
+    for _ in range(heap_end, data.game_tick_address):
+        heap.append(Line())
+
+    memory = instructions + heap + interrupts + stack
+
+    if len(memory) != data.end_of_memory:
+        print "Assembler Error. Generated memory size mismatch."
+        print "Generated: {0} | Correct: {1}".format(len(memory) + 1, data.end_of_memory + 1)
+        print "Exiting..."
+        sys.exit(1)
+    else:
+        return memory
 
 def assemble(instructions):
     return [instruction.assemble() for instruction in instructions]

@@ -50,11 +50,12 @@ class DataWarehouse(object):
     spr_file = "common/sprite-definitions.csv"
 
     instructions_address = int('0x000', 16)
-    data_address         = int('0x400', 16)
+    heap_address         = int('0x400', 16)
     game_tick_address    = int('0xBFD', 16)
     keyboard_address     = int('0xBFE', 16)
     stack_ov_address     = int('0xBFF', 16)
     stack_address        = int('0xC00', 16)
+    end_of_memory        = int('0xFFF', 16)
 
     lookup_table = {}
     instruction_set = {}
@@ -129,7 +130,7 @@ class Line(object):
     data = DataWarehouse()
 
     # if empty initialize line to noop
-    def __init__(self, address, line = "add $zero,$zero,$zero", value = None):
+    def __init__(self, line = "add $zero,$zero,$zero", value = None):
         if value is not None:
             self.value = value
             return
@@ -152,8 +153,7 @@ class Line(object):
         if (raw_fields[1] in self.data_directives):
             raise DataDirective(raw_fields[0], self.data_directives[raw_fields[1]](raw_fields[2]))
 
-        # check if this is a labelled address and set address
-        self.address = address
+        # check if this is line has a label
         if (raw_fields[0][-1] == ':'):
             self.label = raw_fields[0][:-1]
             self.operation = raw_fields[1]

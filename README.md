@@ -9,4 +9,4 @@ Game development framework for the Tronsister-32 ISA
 - pip
 - virtualenv
 
-IMPORTANT: You must create a virtualenv called 'venv' in the root of this project or it will not build succesfully.
+**IMPORTANT:** You must create a virtualenv called 'venv' in the root of this project or it will not build succesfully.

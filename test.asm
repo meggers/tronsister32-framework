@@ -34,6 +34,21 @@ thatare:    andi $at,$at,0xFF
 
 ##############################################
 #                                            #
+#   Interrupts Section                       #
+#                                            #
+##############################################
+
+# handle game tick interrupt
+game_tick_interrupt:    add $v0,$v0,$at
+
+# handle keyboard interrupt 
+keyboard_interrupt:     add $v0,$v0,$at
+
+# handle stack overflow interrupt
+stack_ov_interrupt:     add $v0,$v0,$at
+
+##############################################
+#                                            #
 #   End Instructions                         #
 #                                            #
 ##############################################

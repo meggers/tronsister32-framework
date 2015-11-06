@@ -2,7 +2,7 @@
 Game development framework for the Tronsister-32 ISA
 
 ##Usage:
-`./build_game.sh <input.asm> <output.asm>`
+`./build_game.sh <input.asm> <output.coe>`
 
 ##Requirements:
 - Python 2.7

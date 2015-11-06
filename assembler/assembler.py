@@ -10,9 +10,10 @@ from parse import *
 opcodes = {}
 data = DataWarehouse()
 address_increment = 1
+interrupt_count = 3
 
 def read(program):
-    global data
+    global data, interrupt_count
 
     # initialize memory segments
     instructions    = []
@@ -31,12 +32,17 @@ def read(program):
                 print "Instruction Overflow. Please use fewer instructions or allocate more space for it."
                 sys.exit(1)
 
-            # add instruction to instructions list
-            instructions.append(instruction)
-
             # if it has a label, add (label => address) to lookup table
             if hasattr(instruction, 'label'):
                 data.lookup_table[instruction.label] = current_address
+
+                # if this label is specifying and interrupt, add to interrupts
+                if instruction.label in data.interrupts:
+                    value = '0x{0:08X}'.format(current_address)
+                    interrupts.append(Line(None, value))
+
+            # add instruction to instructions list
+            instructions.append(instruction)
 
             # increment address
             current_address += address_increment
@@ -74,6 +80,13 @@ def read(program):
         except StartInstructions:
             current_address = data.instructions_address
 
+    # check for required interrupts
+    if len(interrupts) != interrupt_count:
+        print "Assembler Error. Invalid number of interrupts."
+        print "Found: {0} | Expected: {1}".format(len(interrupts), interrupt_count)
+        print "Exiting..."
+        sys.exit(1)
+
     # pad instruction section
     instructions_end = data.instructions_address + len(instructions)
     for _ in range(instructions_end, data.heap_address):
@@ -84,11 +97,11 @@ def read(program):
     for _ in range(heap_end, data.game_tick_address):
         heap.append(Line())
 
+    # generate memory and check for correct length
     memory = instructions + heap + interrupts + stack
-
     if len(memory) != data.end_of_memory:
         print "Assembler Error. Generated memory size mismatch."
-        print "Generated: {0} | Correct: {1}".format(len(memory) + 1, data.end_of_memory + 1)
+        print "Generated: {0} | Expected: {1}".format(len(memory) + 1, data.end_of_memory + 1)
         print "Exiting..."
         sys.exit(1)
     else:

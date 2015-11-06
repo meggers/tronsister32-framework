@@ -57,6 +57,7 @@ class DataWarehouse(object):
     stack_address        = int('0xC00', 16)
     end_of_memory        = int('0xFFF', 16)
 
+    interrupts = ['game_tick_interrupt', 'keyboard_interrupt', 'stack_ov_interrupt']
     lookup_table = {}
     instruction_set = {}
     instruction_formats = defaultdict(list)

@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 from collections import defaultdict
+import sys
 
 class EmptyLine(Exception):
     def __init__(self, value):
@@ -33,6 +34,14 @@ class PsuedoInstruction(Exception):
     def get(self):
         return self.instructions
 
+def getBit(y, x):
+    return str((x>>y)&1)
+
+def tobin(x, count):
+    shift = range(count-1, -1, -1)
+    bits = map(lambda y: getBit(y, x), shift)
+    return "".join(bits)
+
 def singleton(cls):
     instances = {}
     def getinstance():
@@ -50,10 +59,15 @@ class DataWarehouse(object):
     spr_file = "common/sprite-definitions.csv"
 
     instructions_address = int('0x000', 16)
+    instructions_end     = int('0x3FC', 16)
+
+    game_tick_address    = int('0x3FD', 16)
+    keyboard_address     = int('0x3FE', 16)
+    stack_ov_address     = int('0x3FF', 16)
+
     heap_address         = int('0x400', 16)
-    game_tick_address    = int('0xBFD', 16)
-    keyboard_address     = int('0xBFE', 16)
-    stack_ov_address     = int('0xBFF', 16)
+    heap_end             = int('0xBFF', 16)
+    
     stack_address        = int('0xC00', 16)
     end_of_memory        = int('0xFFF', 16)
 
@@ -75,7 +89,8 @@ class DataWarehouse(object):
                 instruction_parts = line.rstrip().split(',')
                 self.instruction_set[instruction_parts[0]] = {
                     "opcode": instruction_parts[1],
-                    "format": instruction_parts[2]
+                    "relative": instruction_parts[2] == "1",
+                    "format": instruction_parts[3],
                 }
 
         with open(self.fmt_file) as f:
@@ -83,9 +98,9 @@ class DataWarehouse(object):
             for line in lines[1:]:
                 format_parts = line.rstrip().split(',')
                 self.instruction_formats[format_parts[0]].append({
-                    "order": format_parts[1],
+                    "order": int(format_parts[1]),
                     "type": format_parts[2],
-                    "width": format_parts[3]
+                    "width": int(format_parts[3])
                 })
 
         with open(self.spr_file) as f:
@@ -131,7 +146,8 @@ class Line(object):
     data = DataWarehouse()
 
     # if empty initialize line to noop
-    def __init__(self, line = "add $zero,$zero,$zero", value = None):
+    def __init__(self, address = None, line = "nop $zero,$zero,$zero", value = None):
+
         if value is not None:
             self.value = value
             return
@@ -151,8 +167,14 @@ class Line(object):
             raise StartInstructions(raw_fields)
 
         # check if this is a data directive
-        if (raw_fields[1] in self.data_directives):
-            raise DataDirective(raw_fields[0], self.data_directives[raw_fields[1]](raw_fields[2]))
+        try:
+            if (raw_fields[1] in self.data_directives):
+                raise DataDirective(raw_fields[0], self.data_directives[raw_fields[1]](raw_fields[2]))
+        except IndexError:
+            self.arguments = []
+
+        # set address
+        self.address = address
 
         # check if this is line has a label
         if (raw_fields[0][-1] == ':'):
@@ -161,45 +183,64 @@ class Line(object):
             try:
                 self.arguments = raw_fields[2].split(',')
             except IndexError:
-                self.arguments = None
+                self.arguments = []
         else:
             self.operation = raw_fields[0]
-            self.arguments = raw_fields[1].split(',')
+            try:
+                self.arguments = raw_fields[1].split(',')
+            except:
+                self.arguments = []
 
     def assemble(self):
         if hasattr(self, 'value'):
             return self.value
 
-        instruction_format = self.data.instruction_set[self.operation]
-        instruction_opcode = instruction_format["opcode"]
-        instruction_format = instruction_format["format"]
+        try: 
+            instruction_info = self.data.instruction_set[self.operation]
+            instruction_opcode = instruction_info["opcode"]
+            instruction_format = instruction_info["format"]
+        except KeyError:
+            print "Invalid operation '{0}' found in program. Exiting...".format(self.operation)
+            sys.exit(1)
 
         binary_instruction = instruction_opcode
+        argument_position = 0
         for index, field in enumerate(sorted(self.data.instruction_formats[instruction_format], key=lambda x: x["order"])):
-            length = int(field['width'])
+            length = field['width']
+
             try:
-                if field["type"] == "register":
-                    value = self.data.lookup_table[self.arguments[index]]
+                argument = self.arguments[argument_position]
+            except IndexError:
+                binary_instruction += '0' * length
+                continue
+
+            if field["type"] == "register":
+                if argument in self.data.lookup_table:
+                    value = self.data.lookup_table[argument]
                     value = bin(int(value))[2:].zfill(length)
                     binary_instruction += value
-
-                elif field["type"] == "immediate":
-                    if hasattr(self.data.lookup_table, self.arguments[index]):
-                        value = self.data.lookup_table[self.arguments[index]]
-                        value = bin(int(value))[2:].zfill(length)
-                    else:
-                        value = self.arguments[index]
-                        if "0x" in value:
-                            value = bin(int(value[2:], 16))[2:].zfill(length)
-                        else:
-                            value = bin(int(value))[2:].zfill(length)
-
-                    binary_instruction += value
-
-                elif field["type"] == "not_used":
+                    argument_position += 1
+                else:
                     binary_instruction += '0' * length
 
-            except IndexError:
-                break
+            elif field["type"] == "immediate":
+                if argument in self.data.lookup_table:
+                    value = self.data.lookup_table[argument]
+                    value = int(value) - (self.address + 1) if instruction_info["relative"] else int(value)
+                    value = tobin(value, length)
+                else:
+                    value = argument
+                    if "0x" in value:
+                        value = int(value[2:], 16) - (self.address + 1) if instruction_info["relative"] else int(value[2:], 16)
+                        value = tobin(value, length)
+                    else:
+                        value = int(value) - (self.address + 1) if instruction_info["relative"] else int(value)
+                        value = tobin(value, length)
+
+                binary_instruction += value
+                argument_position += 1
+
+            elif field["type"] == "not_used":
+                binary_instruction += '0' * length
 
         return format(int(binary_instruction, 2), '08x')

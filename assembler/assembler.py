@@ -25,10 +25,10 @@ def read(program):
     for line in program:
         try:
             # try parsing instruction
-            instruction = Line(line)
+            instruction = Line(current_address, line)
 
             # if instructions would overflow into data, exit
-            if current_address >= data.heap_address:
+            if current_address > data.instructions_end:
                 print "Instruction Overflow. Please use fewer instructions or allocate more space for it."
                 sys.exit(1)
 
@@ -38,8 +38,8 @@ def read(program):
 
                 # if this label is specifying and interrupt, add to interrupts
                 if instruction.label in data.interrupts:
-                    value = '0x{0:08X}'.format(current_address)
-                    interrupts.append(Line(None, value))
+                    value = '0x{0:08X}'.format(current_address)[2:]
+                    interrupts.append(Line(None, None, value))
 
             # add instruction to instructions list
             instructions.append(instruction)
@@ -56,7 +56,7 @@ def read(program):
             # make sure we have space for this data
             byte_size = math.ceil(len(directive.value) / 2)
             allocated_end_address = current_address + byte_size
-            if (allocated_end_address >= data.game_tick_address):
+            if (allocated_end_address >= data.heap_end):
                 print "Data Overflow. Please use less data or allocate more space for it."
                 sys.exit(1)
 
@@ -67,14 +67,14 @@ def read(program):
             for character in directive.value:
                 current_value += character
                 if len(current_value) == 8:
-                    heap.append(Line(None, current_value))
+                    heap.append(Line(None, None, current_value))
                     current_address += address_increment
                     current_value = ""
 
             # set overflow value
             overflow_length = len(current_value)
             current_value = ("0" * (8 - overflow_length)) + current_value
-            heap.append(Line(None, current_value))
+            heap.append(Line(None, None, current_value))
 
         # instruction directive found, start writing in instruction section
         except StartInstructions:
@@ -89,12 +89,12 @@ def read(program):
 
     # pad instruction section
     instructions_end = data.instructions_address + len(instructions)
-    for _ in range(instructions_end, data.heap_address):
+    for _ in range(instructions_end, data.instructions_end + 1):
         instructions.append(Line())
 
     # pad data section
     heap_end = data.heap_address + len(heap)
-    for _ in range(heap_end, data.game_tick_address):
+    for _ in range(heap_end, data.heap_end + 1):
         heap.append(Line())
 
     # generate memory and check for correct length

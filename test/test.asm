@@ -30,7 +30,6 @@ lookie:     add $v0,$v0,$at
 iam:        addi $at,$at,10
 
 thatare:    andi $at,$at,0xFF
-            div $t1,$t2,$t3
 
 ##############################################
 #                                            #
@@ -43,6 +42,7 @@ game_tick_interrupt:    add $v0,$v0,$at
 
 # handle keyboard interrupt 
 keyboard_interrupt:     add $v0,$v0,$at
+                        add $v0,$v0,$at
 
 # handle stack overflow interrupt
 stack_ov_interrupt:     add $v0,$v0,$at

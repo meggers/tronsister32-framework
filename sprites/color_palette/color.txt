@@ -1,0 +1,4 @@
+color_palette0: RGB: 3F, 30, 0C, 03
+color_palette1: CMY: 3F, 0F, 33, 3C
+color_palette2: BBB: 3F, 03, 03, 03
+color_palette3: BRG: 3F, 03, 30, 0C

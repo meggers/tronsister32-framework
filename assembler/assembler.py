@@ -5,7 +5,9 @@
 #
 
 import sys, getopt, math
-from parse import *
+
+sys.path.insert(0, os.getcwd() + '/common/')
+from isa import *
 
 opcodes = {}
 data = DataWarehouse()

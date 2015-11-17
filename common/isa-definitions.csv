@@ -1,4 +1,4 @@
-instruction,opcode,relative,format
+instruction,opcode,relative,format,fields
 add,100000,0,R
 addi,100001,0,I
 sub,100010,0,R

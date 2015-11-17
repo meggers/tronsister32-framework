@@ -11,10 +11,26 @@ def main(instruction_count):
     global isa
 
     instructions = isa.instruction_set
+    formats = isa.instruction_formats
+    registers = isa.registers
 
-    for i in range(instruction_count):
+    for _ in range(instruction_count):
         instruction = random.choice(instructions.keys())
+        instruction_info = instructions[instruction]
+
+        fields = []
+        arguments = formats[instruction_info['format']]
+        for i in range(instruction_info["num_fields"]):
+            argument_type = arguments[i]["type"]
+            if argument_type == "immediate":
+                immediate = random.randint(-5, 5)
+                fields.append(str(immediate))
+            elif argument_type == "register":
+                register = random.choice(registers.keys())
+                fields.append(register)
+
         print instruction
+        print ",".join(fields)
 
 # print standard usage msg & any addtl msgs, then exit
 def usage(exit_code, *args):

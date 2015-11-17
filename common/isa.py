@@ -33,6 +33,7 @@ class DataWarehouse(object):
 
     interrupts = ['game_tick_interrupt', 'keyboard_interrupt', 'stack_ov_interrupt']
     lookup_table = {}
+    registers = {}
     instruction_set = {}
     instruction_formats = defaultdict(list)
 
@@ -42,6 +43,7 @@ class DataWarehouse(object):
             for line in lines[1:]:
                 register_parts = line.rstrip().split(',')
                 self.lookup_table[register_parts[0]] = register_parts[1]
+                self.registers[register_parts[0]] = register_parts[1]
 
         with open(self.isa_file) as f:
             lines = f.readlines()
@@ -51,6 +53,7 @@ class DataWarehouse(object):
                     "opcode": instruction_parts[1],
                     "relative": instruction_parts[2] == "1",
                     "format": instruction_parts[3],
+                    "num_fields": int(instruction_parts[4])
                 }
 
         with open(self.fmt_file) as f:
@@ -70,4 +73,3 @@ class DataWarehouse(object):
                 self.lookup_table[sprite_parts[0] + "_index"]  = sprite_parts[1]
                 self.lookup_table[sprite_parts[0] + "_height"] = sprite_parts[2]
                 self.lookup_table[sprite_parts[0] + "_width"]  = sprite_parts[3]
-                

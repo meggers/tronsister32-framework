@@ -1,0 +1,51 @@
+.text
+and $s0,$12,$30
+smv -2,5,3
+srm 3
+add $gp,$1,$16
+and $t7,$t1,$a0
+nand $26,$s5,$t10
+blt 1
+blt 4
+call 3
+add $6,$16,$12
+blt -4
+sld 5
+srm -1
+beq -1
+srm -5
+srl $a0,$13,$zero
+li $4,$2
+addi $v0,$18,1
+sll $t2,$t10,$t8
+xor $s0,$19,$8
+nand $v0,$7,$11
+ssl 5,-5,2
+nop 
+push $a3
+nop 
+nop 
+sft -4
+lw $s7,$2,-4
+srm 5
+smv 1,-2,-4
+push $17
+smv 1,1,-3
+smv 4,-1,0
+andi $22,$fp,2
+srl $s1,$fp,$sp
+addi $10,$a0,2
+srm 5
+bne -5
+sfa -3
+lw $30,$s3,-3
+srl $t5,$23,$13
+blt 0
+sld 5
+srm 0
+blt 2
+li $2,$16
+nand $30,$zero,$13
+nand $t2,$zero,$gp
+sld 1
+nand $a2,$26,$7

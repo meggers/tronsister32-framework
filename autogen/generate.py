@@ -14,6 +14,7 @@ def main(instruction_count):
     formats = isa.instruction_formats
     registers = isa.registers
 
+    generated_lines = []
     for _ in range(instruction_count):
         instruction = random.choice(instructions.keys())
         instruction_info = instructions[instruction]
@@ -29,8 +30,14 @@ def main(instruction_count):
                 register = random.choice(registers.keys())
                 fields.append(register)
 
-        print instruction
-        print ",".join(fields)
+        generated_lines.append("{0} {1}".format(instruction, ",".join(fields)))
+
+    output = open('generated_program.asm', 'w')
+    output.truncate()
+    output.write(".text\n")
+    output.write("\n".join(generated_lines))
+    output.write("\n")
+    output.close()
 
 # print standard usage msg & any addtl msgs, then exit
 def usage(exit_code, *args):

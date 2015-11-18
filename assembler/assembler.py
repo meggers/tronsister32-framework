@@ -4,10 +4,11 @@
 #   Assembler
 #
 
-import sys, getopt, math
+import sys, os, getopt, math
 
 sys.path.insert(0, os.getcwd() + '/common/')
 from isa import *
+from parse import *
 
 opcodes = {}
 data = DataWarehouse()

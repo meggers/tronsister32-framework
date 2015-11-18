@@ -1,6 +1,9 @@
 #!/usr/bin/python
 
-import sys
+import sys, os
+
+sys.path.insert(0, os.getcwd() + '/common/')
+from isa import *
 
 class EmptyLine(Exception):
     def __init__(self, value):

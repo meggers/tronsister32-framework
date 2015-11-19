@@ -4,7 +4,6 @@ import sys, os, getopt, random
 
 sys.path.insert(0, os.getcwd() + '/common/')
 from isa import *
-from parse import *
 
 isa = DataWarehouse()
 

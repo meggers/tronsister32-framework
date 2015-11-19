@@ -9,7 +9,15 @@ class EmptyLine(Exception):
     def __init__(self, value):
         self.value = value
     def __str__(self):
-        return repr(self.value)   
+        return repr(self.value)
+
+class StartData(Exception):
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)
+    def get(self):
+        return self.value
 
 class StartInstructions(Exception):
     def __init__(self, value):
@@ -68,7 +76,7 @@ class Line(object):
     def _space(data):
         return "00" * int(data)
 
-    structure_directives = ['.text']
+    structure_directives = ['.text', '.data']
     data_directives = {
         '.asciiz': _asciiz, 
         '.byte': _byte, 
@@ -92,16 +100,19 @@ class Line(object):
         raw_fields = clean_line.split()
 
         # check if this field contains information
-        if (len(raw_fields) == 0):
+        if len(raw_fields) == 0:
             raise EmptyLine('No information on this line, ignore it.')
 
         # check if this is a structural directive
-        if (raw_fields[0] in self.structure_directives):
-            raise StartInstructions(raw_fields)
+        if raw_fields[0] in self.structure_directives:
+            if raw_fields[0] == '.text':
+                raise StartInstructions(raw_fields)
+            else:
+                raise StartData(raw_fields)
 
         # check if this is a data directive
         try:
-            if (raw_fields[1] in self.data_directives):
+            if raw_fields[1] in self.data_directives:
                 raise DataDirective(raw_fields[0], self.data_directives[raw_fields[1]](raw_fields[2]))
         except IndexError:
             self.arguments = []
@@ -110,7 +121,7 @@ class Line(object):
         self.address = address
 
         # check if this is line has a label
-        if (raw_fields[0][-1] == ':'):
+        if raw_fields[0][-1] == ':':
             self.label = raw_fields[0][:-1]
             self.operation = raw_fields[1]
             try:

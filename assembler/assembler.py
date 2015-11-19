@@ -83,6 +83,10 @@ def read(program):
         except StartInstructions:
             current_address = data.instructions_address
 
+        # data directive found, start writing in heap
+        except StartData:
+            current_address = data.heap_addressSS
+
     # check for required interrupts
     if len(interrupts) != interrupt_count:
         print "Assembler Error. Invalid number of interrupts."

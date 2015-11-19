@@ -85,7 +85,7 @@ def read(program):
 
         # data directive found, start writing in heap
         except StartData:
-            current_address = data.heap_addressSS
+            current_address = data.heap_address
 
     # check for required interrupts
     if len(interrupts) != interrupt_count:

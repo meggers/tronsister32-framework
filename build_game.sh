@@ -19,6 +19,10 @@ python sprites/scrape_alphabet.py
 echo "Generating sprites init files..."
 python sprites/sprite_gen.py
 
+# generate color palette
+echo "Generating color palettes...."
+python colors/palette_gen.py
+
 # assemble program
 echo "Assembling program..."
 python assembler/assembler.py -i $1 -o $2

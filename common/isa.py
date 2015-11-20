@@ -17,6 +17,7 @@ class DataWarehouse(object):
     isa_file = "common/isa-definitions.csv"
     fmt_file = "common/format-definitions.csv"
     spr_file = "common/sprite-definitions.csv"
+    clr_file = "common/palette-definitions.csv"
 
     instructions_address = int('0x000', 16)
     instructions_end     = int('0x3FC', 16)
@@ -73,3 +74,9 @@ class DataWarehouse(object):
                 self.lookup_table[sprite_parts[0] + "_index"]  = sprite_parts[1]
                 self.lookup_table[sprite_parts[0] + "_height"] = sprite_parts[2]
                 self.lookup_table[sprite_parts[0] + "_width"]  = sprite_parts[3]
+
+        with open(self.clr_file) as f:
+            lines = f.readlines()
+            for i, line in enumerate(lines[1:]):
+                palette_parts = line.rstrip().split(',')
+                self.lookup_table[palette_parts[0]] = i

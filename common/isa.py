@@ -32,7 +32,12 @@ class DataWarehouse(object):
     stack_address        = int('0xC00', 16)
     end_of_memory        = int('0xFFF', 16)
 
-    interrupts = ['game_tick_interrupt', 'keyboard_interrupt', 'stack_ov_interrupt']
+    interrupts = {
+        'game_tick_interrupt': game_tick_address, 
+        'keyboard_interrupt': keyboard_address, 
+        'stack_ov_interrupt': stack_ov_address
+    }
+
     lookup_table = {}
     registers = {}
     instruction_set = {}

@@ -22,7 +22,7 @@ def read(program):
     instructions    = []
     heap            = []
     interrupts      = []
-    stack           = [Line() for _ in range(data.end_of_memory - data.stack_address)]
+    stack           = [Line() for _ in range(data.end_of_memory - data.stack_address + 1)]
 
     current_address = data.heap_address
     for line in program:
@@ -39,10 +39,9 @@ def read(program):
             if hasattr(instruction, 'label'):
                 data.lookup_table[instruction.label] = current_address
 
-                # if this label is specifying and interrupt, add to interrupts
+                # if this label is specifying an interrupt, add to interrupts
                 if instruction.label in data.interrupts:
-                    value = '0x{0:08X}'.format(current_address)[2:]
-                    interrupts.append(Line(None, None, value))
+                    interrupts.append(Line(data.interrupts[instruction.label], 'b {0}'.format(instruction.label)))
 
             # add instruction to instructions list
             instructions.append(instruction)
@@ -105,10 +104,10 @@ def read(program):
         heap.append(Line())
 
     # generate memory and check for correct length
-    memory = instructions + heap + interrupts + stack
-    if len(memory) != data.end_of_memory:
+    memory = instructions + interrupts + heap + stack
+    if len(memory) != data.end_of_memory + 1:
         print "Assembler Error. Generated memory size mismatch."
-        print "Generated: {0} | Expected: {1}".format(len(memory) + 1, data.end_of_memory + 1)
+        print "Generated: {0} | Expected: {1}".format(len(memory), data.end_of_memory + 1)
         print "Exiting..."
         sys.exit(1)
     else:

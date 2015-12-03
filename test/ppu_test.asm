@@ -27,19 +27,22 @@ call load_sprite
 #                                   #
 #####################################
 load_sprite:                        #
-    li $t0,0                        # $t0 = 0 ; loop index
-    add $t1,$a1,$a2                 # $t1 = width + height
+    li $t0,0                        # $t0 = 0 ; outer loop index (height)
+    li $t1,0                        # $t1 = 0 : inner loop index (width)
                                     #
-    load_sprite_loop:               #
-        sub $zero,$t0,$t1           #
+    load_sprite_oloop:              #
+        sub $zero,$t0,$a1           #
         beq load_sprite_return      #
                                     #
-        add $t2,$t0,$t1             # $t2 = sprite index + loop index
-        sft $a3,$t2                 # set sprite index in oam
-        addi $t0,1                  # $t0 += 1 ; Increment loop index
-        addi $a3,1                  # $a3 += 1 ; Increment oam index
+        load_sprite_iloop:
+            add $t2,$t0,$t1         # $t2 = sprite index + loop index
+            sft $a3,$t2             # set sprite index in oam
+            addi $t0,1              # $t0 += 1 ; Increment loop index
+            addi $a3,1              # $a3 += 1 ; Increment oam index
                                     #
-        b load_sprite_loop          #
+            b load_sprite_iloop     #
+
+    rst
                                     #
     load_sprite_return:             #
         ret                         #

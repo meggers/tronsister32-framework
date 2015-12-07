@@ -86,6 +86,36 @@ set_x:
     xor $v0,$v0,$a1
     ret
 
+# get_y: Gets Y value from sprite register layout data
+#
+# Arguments:
+#   $a0 - Sprite Register Layout formatted data
+#
+# Returns:
+#   $v0 - y value
+#
+get_y:
+    lw $v0,y_mask
+    and $v0,$a0,$v0
+    ret
+
+# set_x: Sets y value in sprite register layout data
+#
+# Arguments:
+#   $a0 - Sprite Register Layout formatted data
+#   $a1 - y data to set (lsb 8 bits)
+#
+# Returns:
+#   $v0 - SRL data with new y
+#
+set_y:
+    lw $t0,y_mask
+    and $t1,$t0,$a1
+    nand $t0,$t0,$t0
+    and $v0,$a0,$t0
+    xor $v0,$v0,$t1
+    ret
+
 ###############################################
 
 

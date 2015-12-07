@@ -1,8 +1,11 @@
 .data
 
-x_mask: .word 0xFF000000
-y_mask: .word 0x000000FF
-sprite_index_mask: .word 0x00FF0000
+x_mask:             .word 0xFF000000
+sprite_index_mask:  .word 0x00FF0000
+vertical_flip_mask: .word 0x00008000
+horiz_flip_mask:    .word 0x00004000
+color_palette_mask: .word 0x00000300
+y_mask:             .word 0x000000FF
 
 oam_copy: .space 64
 
@@ -18,7 +21,8 @@ oam_copy: .space 64
 #   $a0: sprite index               #
 #   $a1: sprite height              #
 #   $a2: sprite width               #
-#   $a3: start oam index            #
+#   $a3: Starting Attr              #
+#    (in Sprite Register Layout)    #
 #                                   #
 #####################################
 load_sprite_img:                    #
@@ -51,25 +55,39 @@ load_sprite_img:                    #
         ret                         #
 #####################################
 
-#####################################
+# get_x: Gets X value from sprite register layout data
 #
-# 
+# Arguments:
+#   $a0 - Sprite Register Layout formatted data
 #
-#####################################
-load_single_sprite:                 #
-    pop $t0                         # pop oam index
-    pop $t1                         # pop sprite index
-                                    #
-    sft $t0,$t1                     # store in real oam
-                                    #
-    lw $t3,$zero,sprite_index_mask  # load sprite index mask
-    sll $t1,$t1,24                  # shift index to correct spot
-    and $t1,$t1,$t3                 # mask off index
-    sw $t1,$at,0                    # store index at spot in memory
-    addi $at,$at,1                  # increment free oam spot in memory
-    ret                             #
-                                    #
-#####################################
+# Returns:
+#   $v0 - x value
+#
+get_x:
+    lw $v0,x_mask
+    and $v0,$a0,$v0
+    srl $v0,$v0,24
+    ret
+
+# set_x: Sets x value in sprite register layout data
+#
+# Arguments:
+#   $a0 - Sprite Register Layout formatted data
+#   $a1 - x data to set (lsb 8 bits)
+#
+# Returns:
+#   $v0 - SRL data with new x
+#
+set_x:
+    lw $t0,x_mask
+    nand $t0,$t0,$t0
+    and $v0,$a0,$t0
+    sll $a1,$a1,24
+    xor $v0,$v0,$a1
+    ret
+
+###############################################
+
 
 # handle game tick interrupt
 game_tick_interrupt:    add $v0,$v0,$at

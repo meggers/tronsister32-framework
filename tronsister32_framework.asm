@@ -103,9 +103,7 @@ load_sprite_img:                    #
 #
 #######################################################
 get_x:
-    lw $v0,x_mask
-    and $v0,$a0,$t0
-    srl $v0,$v0,24
+    srl $v0,$a0,24
     ret
 
 #####################################################
@@ -181,23 +179,62 @@ set_tile_no:
     lw $t0,sprite_index_mask
     ret
 
+#######################################################
+# get_v_flip: Gets vertical flip from s.r.l.d.
+#
+# Arguments:
+#   $a0 - Sprite Register Layout formatted data
+#
+# Returns:
+#   $v0 - vertical flip
+#
+#######################################################
 get_v_flip:
     lw $t0,vertical_flip_mask
+    and $v0,$a0,$t0
+    srl $v0,$v0,15
     ret
+
 set_v_flip:
     lw $t0,vertical_flip_mask
     ret
 
+#######################################################
+# get_h_flip: Gets horizontal flip from s.r.l.d.
+#
+# Arguments:
+#   $a0 - Sprite Register Layout formatted data
+#
+# Returns:
+#   $v0 - horizontal flip
+#
+#######################################################
 get_h_flip:
     lw $t0,horiz_flip_mask
+    and $v0,$a0,$t0
+    srl $v0,$v0,14
     ret
+
 set_h_flip:
     lw $t0,horiz_flip_mask
     ret
 
+#######################################################
+# get_color_palette: Gets color palette from s.r.l.d.
+#
+# Arguments:
+#   $a0 - Sprite Register Layout formatted data
+#
+# Returns:
+#   $v0 - color palette
+#
+#######################################################
 get_color_palette:
     lw $t0,color_palette_mask
+    and $v0,$a0,$t0
+    srl $v0,$v0,8
     ret
+
 set_color_palette:
     lw $t0,color_palette_mask
     ret
@@ -215,13 +252,19 @@ set_color_palette:
 #########################################################################################################################
 
 # handle game tick interrupt
-game_tick_interrupt:    nop $zero,$zero,$zero
+game_tick_interrupt:    
+    nop $zero,$zero,$zero
+    j $epc
 
 # handle keyboard interrupt 
-keyboard_interrupt:     nop $zero,$zero,$zero
+keyboard_interrupt:     
+    nop $zero,$zero,$zero
+    j $epc
                         
 # handle stack overflow interrupt
-stack_ov_interrupt:     nop $zero,$zero,$zero
+stack_ov_interrupt:
+    nop $zero,$zero,$zero
+    j $epc
 
 #########################################################################################################################
 # _____ _            _____          _                                                                                   #

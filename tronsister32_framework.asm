@@ -89,7 +89,7 @@ load_sprite_img: nop                #
                                     #
             add $10,$zero,$v0       # get chained results from above functions
             sld $t5,$t10            # load the sprite data to oam
-            lw $10,$t9              # load the sprite data to mem oam
+            sw $10,$t9,0            # load the sprite data to mem oam
                                     #
             addi $t5,$t5,1          # increment current oam slot
             addi $t9,$t5,1          # increment current mem oam slot
@@ -134,7 +134,7 @@ load_sprite_img: nop                #
 #   $v0 - x value
 #
 #######################################################
-get_x: nop $0,$0,$0
+get_x: nop
     srl $v0,$a0,24
     ret
 
@@ -149,8 +149,8 @@ get_x: nop $0,$0,$0
 #   $v0 - SRL data with new x
 #
 #####################################################
-set_x: nop $0,$0,$0
-    lw $t0,x_mask
+set_x: nop
+    lw $t0,$0,x_mask
     nand $t0,$t0,$t0
     and $v0,$a0,$t0
     sll $a1,$a1,24
@@ -167,8 +167,8 @@ set_x: nop $0,$0,$0
 #   $v0 - y value
 #
 #######################################################
-get_y: nop $0,$0,$0
-    lw $v0,y_mask
+get_y: nop
+    lw $v0,$0,y_mask
     and $v0,$a0,$v0
     ret
 
@@ -183,8 +183,8 @@ get_y: nop $0,$0,$0
 #   $v0 - SRL data with new y
 #
 #####################################################
-set_y: nop $0,$0,$0
-    lw $t0,y_mask
+set_y: nop
+    lw $t0,$0,y_mask
     and $t1,$t0,$a1
     nand $t0,$t0,$t0
     and $v0,$a0,$t0
@@ -201,8 +201,8 @@ set_y: nop $0,$0,$0
 #   $v0 - tile number
 #
 #######################################################
-get_tile_no: nop $0,$0,$0
-    lw $t0,sprite_index_mask
+get_tile_no: nop
+    lw $t0,$0,sprite_index_mask
     and $v0,$a0,$t0
     srl $v0,$v0,16
     ret
@@ -218,8 +218,8 @@ get_tile_no: nop $0,$0,$0
 #   $v0 - S.R.L. data with new tile number
 #
 #######################################################
-set_tile_no: nop $0,$0,$0
-    lw $t0,sprite_index_mask
+set_tile_no: nop
+    lw $t0,$0,sprite_index_mask
     nand $t0,$t0,$t0
     and $v0,$t0,$a0
     sll $a1,$a1,16
@@ -236,8 +236,8 @@ set_tile_no: nop $0,$0,$0
 #   $v0 - vertical flip
 #
 #######################################################
-get_v_flip: nop $0,$0,$0
-    lw $t0,vertical_flip_mask
+get_v_flip: nop
+    lw $t0,$0,vertical_flip_mask
     and $v0,$a0,$t0
     srl $v0,$v0,15
     ret
@@ -253,8 +253,8 @@ get_v_flip: nop $0,$0,$0
 #   $v0 - S.R.L. data with vertical flip
 #
 #######################################################
-set_v_flip: nop $0,$0,$0
-    lw $t0,vertical_flip_mask
+set_v_flip: nop
+    lw $t0,$0,vertical_flip_mask
     nand $t0,$t0,$t0
     and $v0,$a0,$t0
     sll $a1,$a1,15
@@ -271,8 +271,8 @@ set_v_flip: nop $0,$0,$0
 #   $v0 - horizontal flip
 #
 #######################################################
-get_h_flip: nop $0,$0,$0
-    lw $t0,horiz_flip_mask
+get_h_flip: nop
+    lw $t0,$0,horiz_flip_mask
     and $v0,$a0,$t0
     srl $v0,$v0,14
     ret
@@ -288,8 +288,8 @@ get_h_flip: nop $0,$0,$0
 #   $v0 - S.R.L. data with horizontal flip
 #
 #######################################################
-set_h_flip: nop $0,$0,$0
-    lw $t0,horiz_flip_mask
+set_h_flip: nop
+    lw $t0,$0,horiz_flip_mask
     nand $t0,$t0,$t0
     and $v0,$a0,$t0
     sll $a1,$a1,14
@@ -306,8 +306,8 @@ set_h_flip: nop $0,$0,$0
 #   $v0 - color palette
 #
 #######################################################
-get_color_palette: nop $0,$0,$0
-    lw $t0,color_palette_mask
+get_color_palette: nop
+    lw $t0,$0,color_palette_mask
     and $v0,$a0,$t0
     srl $v0,$v0,8
     ret
@@ -323,8 +323,8 @@ get_color_palette: nop $0,$0,$0
 #   $v0 - S.R.L. data with new color palette
 #
 #######################################################
-set_color_palette: nop $0,$0,$0
-    lw $t0,color_palette_mask
+set_color_palette: nop
+    lw $t0,$0,color_palette_mask
     nand $t0,$t0,$t0
     and $v0,$a0,$t0
     sll $a1,$a1,8
@@ -344,17 +344,17 @@ set_color_palette: nop $0,$0,$0
 ##########################################################################################################################
 
 # handle game tick interrupt
-game_tick_interrupt: nop $0,$0,$0
+game_tick_interrupt: nop
     nop $zero,$zero,$zero
     jr $epc
 
 # handle keyboard interrupt 
-keyboard_interrupt: nop $0,$0,$0
+keyboard_interrupt: nop
     nop $zero,$zero,$zero
     jr $epc
                         
 # handle stack overflow interrupt
-stack_ov_interrupt: nop $0,$0,$0
+stack_ov_interrupt: nop
     nop $zero,$zero,$zero
     jr $epc
 

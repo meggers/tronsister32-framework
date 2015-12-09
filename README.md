@@ -2,7 +2,23 @@
 Game development framework for the Tronsister-32 ISA
 
 ##Usage:
-`./build_game.sh <input.asm> <output.coe>`
+`./build_game.sh <game folder> <flags>`
+
+Optional flags:
+    `-f`: includes tronsistor framework code in assembly
+
+Game folder should follow form of:
+```
+game_folder/
+    main.asm
+    assets/
+        font/
+            main.ttf
+        foreground/
+            *.png
+        background/
+            *.png
+```
 
 ##Requirements:
 - Python 2.7

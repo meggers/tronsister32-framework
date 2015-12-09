@@ -345,17 +345,14 @@ set_color_palette: nop
 
 # handle game tick interrupt
 game_tick_interrupt: nop
-    nop $zero,$zero,$zero
     jr $epc
 
 # handle keyboard interrupt 
 keyboard_interrupt: nop
-    nop $zero,$zero,$zero
     jr $epc
                         
 # handle stack overflow interrupt
 stack_ov_interrupt: nop
-    nop $zero,$zero,$zero
     jr $epc
 
 ##########################################################################################################################

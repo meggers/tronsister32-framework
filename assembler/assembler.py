@@ -15,16 +15,15 @@ data = DataWarehouse()
 address_increment = 1
 interrupt_count = 3
 
-def read(program):
-    global data, interrupt_count
+def read(program, start_instructions, start_heap):
+    global data, address_increment
 
     # initialize memory segments
     instructions    = []
     heap            = []
     interrupts      = []
-    stack           = [Line() for _ in range(data.end_of_memory - data.stack_address + 1)]
 
-    current_address = data.heap_address
+    current_address = start_heap
     for line in program:
         try:
             # try parsing instruction
@@ -80,11 +79,48 @@ def read(program):
 
         # instruction directive found, start writing in instruction section
         except StartInstructions:
-            current_address = data.instructions_address
+            current_address = start_instructions
 
         # data directive found, start writing in heap
         except StartData:
-            current_address = data.heap_address
+            current_address = start_heap
+
+    # generate memory segments
+    return (instructions, interrupts, heap)
+
+def assemble(instructions):
+    return [instruction.assemble() for instruction in instructions]
+
+def dump(assembly, filename):
+    global data
+
+    output = open(filename, 'w')
+    output.truncate()
+    output.write("memory_initialization_radix=16;\nmemory_initialization_vector=\n")
+    output.write(",\n".join(assembly))
+    output.write(";")
+    output.close
+
+def main((input_filename, output_filename)):
+    global data, interrupt_count
+
+    # read framework assembly
+    with open("tronsister32_framework.asm") as f:
+        framework = f.readlines()
+        fw_instructions, fw_interrupts, fw_heap = read(framework, start_instructions=data.instructions_address, start_heap=data.heap_address)
+
+    # read game assembly
+    with open(input_filename) as f:
+        program = f.readlines()
+        temp_instructions = data.instructions_address + len(fw_instructions)
+        temp_heap = data.heap_address + len(fw_heap)
+        game_instructions, game_interrupts, game_heap = read(program, start_instructions=temp_instructions, start_heap=temp_heap)
+
+    # concatenate framework with game for all memory segments
+    instructions = fw_instructions + game_instructions
+    interrupts = fw_interrupts + game_interrupts
+    heap = fw_heap + game_heap
+    stack  = [Line() for _ in range(data.end_of_memory - data.stack_address + 1)]
 
     # check for required interrupts
     if len(interrupts) != interrupt_count:
@@ -104,34 +140,15 @@ def read(program):
         heap.append(Line())
 
     # generate memory and check for correct length
-    memory = instructions + interrupts + heap + stack
-    if len(memory) != data.end_of_memory + 1:
+    program = instructions + interrupts + heap + stack
+    if len(program) != data.end_of_memory + 1:
         print "Assembler Error. Generated memory size mismatch."
-        print "Generated: {0} | Expected: {1}".format(len(memory), data.end_of_memory + 1)
+        print "Generated: {0} | Expected: {1}".format(len(program), data.end_of_memory + 1)
         print "Exiting..."
         sys.exit(1)
-    else:
-        return memory
 
-def assemble(instructions):
-    return [instruction.assemble() for instruction in instructions]
-
-def dump(assembly, filename):
-    global data
-
-    output = open(filename, 'w')
-    output.truncate()
-    output.write("memory_initialization_radix=16;\nmemory_initialization_vector=\n")
-    output.write(",\n".join(assembly))
-    output.write(";")
-    output.close
-
-def main((input_filename, output_filename)):
-    with open(input_filename) as f:
-        program = f.readlines()
-        instructions = read(program)
-        assembly = assemble(instructions)
-        dump(assembly, output_filename)
+    assembly = assemble(program)
+    dump(assembly, output_filename)
 
 # print standard usage msg & any addtl msgs, then exit
 def usage(exit_code, *args):

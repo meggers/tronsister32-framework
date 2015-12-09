@@ -32,7 +32,7 @@ oam_copy: .space 64
 
 .text
 
-b game_instuctions
+b game_instructions
 
 #####################################
 #                                   #
@@ -93,7 +93,7 @@ move_sprite_img: nop                #
         addi $t0,$t0,1              # increment mem_oam index
                                     #
         addi $0,$t3,-64             # check if we overflow oam
-        beq move_sprite_ret         # if we do jump to end
+        beq move_sprite_img_ret     # if we do jump to end
                                     #
         lw $t6,$t3,0                # if we don't then get sprite data
                                     #
@@ -409,30 +409,6 @@ set_color_palette: nop
     sll $a1,$a1,8
     xor $v0,$v0,$a1
     ret
-
-##########################################################################################################################
-#  _____                 _   _                 _ _                                                                       #
-# |_   _|               | | | |               | | |                                                                      #
-#   | |_ __ __ _ _ __   | |_| | __ _ _ __   __| | | ___ _ __ ___                                                         #
-#   | | '__/ _` | '_ \  |  _  |/ _` | '_ \ / _` | |/ _ \ '__/ __|                                                        #
-#   | | | | (_| | |_) | | | | | (_| | | | | (_| | |  __/ |  \__ \                                                        #
-#   \_/_|  \__,_| .__/  \_| |_/\__,_|_| |_|\__,_|_|\___|_|  |___/                                                        #
-#               | |                                                                                                      #
-#               |_|                                                                                                      #
-#                                                                                                                        #
-##########################################################################################################################
-
-# handle game tick interrupt
-game_tick_interrupt: nop
-    jr $epc
-
-# handle keyboard interrupt 
-keyboard_interrupt: nop
-    jr $epc
-                        
-# handle stack overflow interrupt
-stack_ov_interrupt: nop
-    jr $epc
 
 game_instructions: nop
 

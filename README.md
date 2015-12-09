@@ -4,8 +4,7 @@ Game development framework for the Tronsister-32 ISA
 ##Usage:
 `./build_game.sh <game folder> <flags>`
 
-Optional flags:
-    `-f`: includes tronsistor framework code in assembly
+Optional: `-f` includes tronsistor32 framework code in assembly
 
 Game folder should follow form of:
 ```

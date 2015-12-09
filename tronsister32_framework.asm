@@ -38,41 +38,73 @@ oam_copy: .space 64
 # DEFN: load sprite into oam        #
 #                                   #
 # ARGUMENTS:                        #
-#   $a0: sprite index               #
-#   $a1: sprite height              #
-#   $a2: sprite width               #
-#   $a3: Starting Attr              #
-#    (in Sprite Register Layout)    #
+#   0(sf): sprite index             #
+#   1(sf): sprite height            #
+#   2(sf): sprite width             #
+#   3(sf): left x (8 lsb)           #
+#   4(sf): top y (8 lsb)            #
+#   5(sf): starting oam slot        #
 #                                   #
 #####################################
 load_sprite_img:                    #
-    li $t0,0                        # $t0 = 0 ; outer loop index (height)
-    li $t1,0                        # $t1 = 0 ; inner loop index (width)
-    li $t3,0                        # cur_sprite = 0
+    pop $t0                         # t0 = sprite index
+    pop $t1                         # t1 = sprite height
+    pop $t2                         # t2 = sprite width
+    pop $t3                         # t3 = left coordinate (x)
+    pop $t4                         # t4 = top coordinate (y)
+    pop $t5                         # t5 = starting oam slot
+                                    #
+    li $t6,0                        # t6 = 0 ; outer loop index (height)
+    li $t7,0                        # t7 = 0 ; inner loop index (width)
+    add $t8,$zero,$t0               # t8 = t0 ; current sprite index
+                                    #
+    li $t9,oam_copy                 # get oam mem_copy start location in memory
+    add $t9,$t9,t5                  # increment mem oam index to starting index
+                                    #
+    li $t10,0                       # initialize sprite register data to 0
                                     #
     load_sprite_oloop:              #
-        sub $zero,$t0,$a1           #
+        sub $zero,$t1,$t6           #
         beq load_sprite_return      #
                                     #
         load_sprite_iloop:          #
-            sub $zero,$t1,$a2       #
+            sub $zero,$t2,$t7       #
             beq rst_sprite_iloop    #
-                                    #            
-            add $t2,$a0,$t3         # $t2 = sprite index + loop index
-            sft $a3,$t2             # set sprite index in oam
-            addi $t3,1              # $t0 += 1 ; Increment loop index
-            addi $a3,1              # $a3 += 1 ; Increment oam index
                                     #
-            addi $t1,1              # increment inner loop index
+            add $a0,$zero,$10       # set current sprite data into first argument
+            add $a1,$zero,$t8       # set current sprite index number into second argument
+            call set_tile_no        #
+                                    #
+            add $a0,$zero,$v0       # set current sprite data into first argument
+            add $a1,$zero,$t7       # get current inner loop (width) index
+            sll $a1,$a1,3           # multiple index by 8 to get x offset
+            add $a1,$a1,$t3         # add x offset to initial left coordinate as second argument
+            call set_x              #
+                                    #
+            add $a0,$zero,$v0       # set current sprite data into first argument
+            add $a1,$zero,$t6       # get current outer loop (height) index
+            sll $a1,$a1,3           # multiply index by 8 to get y offset
+            add $a1,$a1,$t4         # add y offset to initial top coordinate as second argument
+            call set_y              #
+                                    #
+            add $10,$zero,$v0       # get chained results from above functions
+            sld $t5,$t10            # load the sprite data to oam
+            lw $10,$t9              # load the sprite data to mem oam
+                                    #
+            addi $t5,1              # increment current oam slot
+            addi $t9,1              # increment current mem oam slot
+            addi $t8,1              # increment current sprite index
+            addi $t7,1              # increment inner loop index
             b load_sprite_iloop     #
                                     #
         rst_sprite_iloop:           #
-            li $t1,0                # reset inner loop index
-            addi $t0,1              # increment outer loop index
+            li $t7,0                # reset inner loop index
+            addi $t6,1              # increment outer loop index
             b load_sprite_oloop     # 
                                     #
     load_sprite_return:             #
         ret                         #
+#####################################
 
 ##########################################################################################################################
 #   _____            _ _        ______           _     _                                                                 #

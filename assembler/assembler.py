@@ -91,17 +91,17 @@ def read(program, start_instructions, start_heap):
 def assemble(instructions):
     return [instruction.assemble() for instruction in instructions]
 
-def dump(assembly, filename):
+def dump(assembly, game_directory):
     global data
 
-    output = open(filename, 'w')
+    output = open(game_directory + '/build/main.coe', 'w')
     output.truncate()
     output.write("memory_initialization_radix=16;\nmemory_initialization_vector=\n")
     output.write(",\n".join(assembly))
     output.write(";")
     output.close
 
-def main((input_filename, output_filename, framework)):
+def main((game_directory, framework)):
     global data, interrupt_count
 
     # read framework assembly if flagged
@@ -113,7 +113,7 @@ def main((input_filename, output_filename, framework)):
         fw_instructions, fw_interrupts, fw_heap = ([], [], [])
 
     # read game assembly
-    with open(input_filename) as f:
+    with open(game_directory + "main.asm") as f:
         program = f.readlines()
         temp_instructions = data.instructions_address + len(fw_instructions)
         temp_heap = data.heap_address + len(fw_heap)
@@ -151,43 +151,38 @@ def main((input_filename, output_filename, framework)):
         sys.exit(1)
 
     assembly = assemble(program)
-    dump(assembly, output_filename)
+    dump(assembly, game_directory)
 
 # print standard usage msg & any addtl msgs, then exit
 def usage(exit_code, *args):
     for arg in args:
         print arg
 
-    print "assembler.py -i <input_filename> -o <output_filename>"
+    print "assembler.py -d <game_folder>"
     sys.exit(exit_code)
 
 # parse our command line arguments
 def parse_args(argv):
-    input_filename = ""
-    output_filename = ""
+    game_directory = ""
     framework = False
 
     try:
-        opts, args = getopt.getopt(argv, "hfi:o:", ["help","framework","input=","output="])
+        opts, args = getopt.getopt(argv, "hfd:", ["help","framework","game_directory="])
     except getopt.GetoptError as error:
         usage(2, str(error))
 
     for opt, arg in opts:
         if opt in ("-h", "--help"):
             usage(0)
-        elif opt in ("-i", "--input"):
-            input_filename = arg
-        elif opt in ("-o", "--output"):
-            output_filename = arg
+        elif opt in ("-d", "--game_directory"):
+            game_directory = arg
         elif opt in ("-f", "--framework"):
             framework = True
 
-    if input_filename in [None, ""]:
-        usage(2, 'You must specify an input filename.')
-    elif output_filename in [None, ""]:
-        usage(2, 'You must specify an output filename.')
+    if game_directory in [None, ""]:
+        usage(2, 'You must specify a game directory.')
 
-    return input_filename, output_filename, framework
+    return game_directory, framework
 
 if __name__ == "__main__": 
     main(parse_args(sys.argv[1:]))

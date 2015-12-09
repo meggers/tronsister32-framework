@@ -25,7 +25,7 @@ python colors/palette_gen.py
 
 # assemble program
 echo "Assembling program..."
-python assembler/assembler.py -i $1 -o $2 $3
+python assembler/assembler.py -d $1 $2
 
 echo "Game build successful."
 echo "Deactivating virtual environment"

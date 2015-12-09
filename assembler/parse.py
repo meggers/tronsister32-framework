@@ -162,7 +162,7 @@ class Line(object):
                 continue
 
             if field["type"] == "register":
-                if argument in self.data.lookup_table:
+                if argument in self.data.registers:
                     value = self.data.lookup_table[argument]
                     value = bin(int(value))[2:].zfill(length)
                     binary_instruction += value
@@ -171,9 +171,6 @@ class Line(object):
                     binary_instruction += '0' * length
 
             elif field["type"] == "immediate":
-                if argument == 'oam_copy':
-                    print "poop"
-                    print self.data.lookup_table
                 if argument in self.data.lookup_table:
                     value = self.data.lookup_table[argument]
                     value = int(value) - (self.address + 1) if instruction_info["relative"] else int(value)

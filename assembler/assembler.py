@@ -101,13 +101,16 @@ def dump(assembly, filename):
     output.write(";")
     output.close
 
-def main((input_filename, output_filename)):
+def main((input_filename, output_filename, framework)):
     global data, interrupt_count
 
-    # read framework assembly
-    with open("tronsister32_framework.asm") as f:
-        framework = f.readlines()
-        fw_instructions, fw_interrupts, fw_heap = read(framework, start_instructions=data.instructions_address, start_heap=data.heap_address)
+    # read framework assembly if flagged
+    if framework:
+        with open("tronsister32_framework.asm") as f:
+            framework = f.readlines()
+            fw_instructions, fw_interrupts, fw_heap = read(framework, start_instructions=data.instructions_address, start_heap=data.heap_address)
+    else:
+        fw_instructions, fw_interrupts, fw_heap = ([], [], [])
 
     # read game assembly
     with open(input_filename) as f:
@@ -120,7 +123,7 @@ def main((input_filename, output_filename)):
     instructions = fw_instructions + game_instructions
     interrupts = fw_interrupts + game_interrupts
     heap = fw_heap + game_heap
-    stack  = [Line() for _ in range(data.end_of_memory - data.stack_address + 1)]
+    stack = [Line() for _ in range(data.end_of_memory - data.stack_address + 1)]
 
     # check for required interrupts
     if len(interrupts) != interrupt_count:
@@ -162,9 +165,10 @@ def usage(exit_code, *args):
 def parse_args(argv):
     input_filename = ""
     output_filename = ""
+    framework = False
 
     try:
-        opts, args = getopt.getopt(argv, "hi:o:", ["help","input=","output="])
+        opts, args = getopt.getopt(argv, "hfi:o:", ["help","framework","input=","output="])
     except getopt.GetoptError as error:
         usage(2, str(error))
 
@@ -175,13 +179,15 @@ def parse_args(argv):
             input_filename = arg
         elif opt in ("-o", "--output"):
             output_filename = arg
+        elif opt in ("-f", "--framework"):
+            framework = True
 
     if input_filename in [None, ""]:
         usage(2, 'You must specify an input filename.')
     elif output_filename in [None, ""]:
         usage(2, 'You must specify an output filename.')
 
-    return input_filename, output_filename    
+    return input_filename, output_filename, framework
 
 if __name__ == "__main__": 
     main(parse_args(sys.argv[1:]))

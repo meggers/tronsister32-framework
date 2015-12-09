@@ -96,6 +96,9 @@ class Line(object):
         # remove comments
         clean_line = line.split("#")[0]
 
+        # remove spaces/new lines
+        clean_line = clean_line.rstrip()
+
         # split on spaces
         raw_fields = clean_line.split()
 

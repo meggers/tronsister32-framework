@@ -26,24 +26,102 @@ vertical_flip_mask: .word 0x00008000
 horiz_flip_mask:    .word 0x00004000
 color_palette_mask: .word 0x00000300
 y_mask:             .word 0x000000FF
+clear_sprite:       .word 0xFFFFFFFF
 
 oam_copy: .space 64
 
 .text
 
+b game_instuctions
+
 #####################################
 #                                   #
-# FUNCTION: load_sprite_img         #
+# Function: move_sprite_img         #
 #                                   #
-# DEFN: load sprite into oam        #
+# Defn: move sprite by specified    #
+#   number of pixels.               #
 #                                   #
-# ARGUMENTS:                        #
+# Arguments:                        #
+#   0(sf): starting oam slot        #
+#   1(sf): x delta                  #
+#   2(sf): y delta                  #
+#                                   #
+# Returns:                          #
+#   0(sf) - top                     #
+#   1(sf) - bottom                  #
+#   2(sf) - left                    #
+#   3(sf) - right                   #
+#                                   #
+#####################################
+move_sprite_img: nop                #
+    pop $t0                         # t0 = starting oam slot
+    pop $t1                         # t1 = delta x
+    pop $t2                         # t2 = delta y
+                                    #
+    li $t3,oam_copy                 # t3 = oam mem_copy start location in memory
+    add $t3,$t3,$t0                 # t3 = mem_oam start + oam offset
+    lw $t6,$t3,0                    # t6 = data at t3
+                                    #
+    lw $a0,$t3,0                    # pass sprite data as argument
+    call get_tile_no                #
+    add $t4,$0,$v0                  # get sprite number we're looking for
+                                    #
+    add $t5,$0,$t4                  # initialize loop sprite to sprite we're looking for
+                                    #
+    move_sprite_img_loop: nop       #
+        sub $0,$t4,$t5              #
+        bne move_sprite_img_ret     #
+                                    #
+        add $a0,$0,$t6              # pass sprite data as argument
+        call get_x                  # grab x
+                                    #
+        add $a0,$0,$t6              # pass sprite data as argument
+        add $a1,$t1,$v0             # pass x + delta_x as offset
+        call set_x                  # get resulting sprite data
+                                    #
+        add $a0,$0,$v0              # pass sprite data as argument
+        call get_y                  # grab y
+                                    #
+        add $a0,$a0,$t6             # pass sprite data as argument
+        add $a1,$t2,$v0             # pass y + delta_y as offset
+        call set_y                  # get resulting sprite data
+                                    #
+        sld $t0,$v0                 # store data in oam
+        sw $v0,$t3,0                # store data in memory
+                                    #
+        addi $t3,$t3,1              # increment oam index 
+        addi $t0,$t0,1              # increment mem_oam index
+                                    #
+        addi $0,$t3,-64             # check if we overflow oam
+        beq move_sprite_ret         # if we do jump to end
+                                    #
+        lw $t6,$t3,0                # if we don't then get sprite data
+                                    #
+        add $a0,$0,$t6              # pass sprite data as an argument
+        call get_tile_no            # get tile number
+        add $t5,$0,$v0              # set tile numer
+        b move_sprite_img_loop      # 
+                                    #
+    move_sprite_img_ret: nop        #
+        ret                         #
+#####################################
+
+#####################################
+#                                   #
+# Function: load_sprite_img         #
+#                                   #
+# Defn: load sprite into oam        #
+#                                   #
+# Arguments:                        #
 #   0(sf): sprite index             #
 #   1(sf): sprite height            #
 #   2(sf): sprite width             #
 #   3(sf): left x (8 lsb)           #
 #   4(sf): top y (8 lsb)            #
 #   5(sf): starting oam slot        #
+#                                   #
+# Returns:                          #
+#   $v0 - next free oam slot        #
 #                                   #
 #####################################
 load_sprite_img: nop                #
@@ -61,7 +139,7 @@ load_sprite_img: nop                #
     li $t9,oam_copy                 # get oam mem_copy start location in memory
     add $t9,$t9,$t5                 # increment mem oam index to starting index
                                     #
-    li $t10,0                       # initialize sprite register data to 0
+    lw $t10,$0,clear_sprite         # initialize sprite register data to all Fs
                                     #
     load_sprite_oloop: nop          #
         sub $zero,$t1,$t6           #
@@ -103,6 +181,7 @@ load_sprite_img: nop                #
             b load_sprite_oloop     # 
                                     #
     load_sprite_return: nop         #
+        add $v0,$0,$t5              #
         ret                         #
 #####################################
 
@@ -355,6 +434,8 @@ keyboard_interrupt: nop
 stack_ov_interrupt: nop
     jr $epc
 
+game_instructions: nop
+
 ##########################################################################################################################
 #  _____ _            _____          _                                                                                   #
 # |_   _| |          |  ___|        | |                                                                                  #
@@ -362,6 +443,5 @@ stack_ov_interrupt: nop
 #   | | | '_ \ / _ \ |  __| '_ \ / _` |                                                                                  #
 #   | | | | | |  __/ | |__| | | | (_| |_                                                                                 #
 #   \_/ |_| |_|\___| \____/_| |_|\__,_(_)                                                                                #
-#                                                                                                                        #
 #                                                                                                                        #
  ########################################################################################################################

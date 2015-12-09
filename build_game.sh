@@ -13,15 +13,15 @@ pip install -r requirements.txt
 
 # get character sprites out of ttf
 echo "Parsing font files..."
-python sprites/scrape_alphabet.py
+python sprites/scrape_alphabet.py -d $1
 
 # generate foreground and background coe files
 echo "Generating sprites init files..."
-python sprites/sprite_gen.py
+python sprites/sprite_gen.py -d $1
 
 # generate color palette
 echo "Generating color palettes...."
-python colors/palette_gen.py
+python colors/palette_gen.py -d $1
 
 # assemble program
 echo "Assembling program..."

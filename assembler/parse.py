@@ -113,7 +113,7 @@ class Line(object):
         # check if this is a data directive
         try:
             if raw_fields[1] in self.data_directives:
-                raise DataDirective(raw_fields[0], self.data_directives[raw_fields[1]](raw_fields[2]))
+                raise DataDirective(raw_fields[0][:-1], self.data_directives[raw_fields[1]](raw_fields[2]))
         except IndexError:
             self.arguments = []
 
@@ -168,6 +168,9 @@ class Line(object):
                     binary_instruction += '0' * length
 
             elif field["type"] == "immediate":
+                if argument == 'oam_copy':
+                    print "poop"
+                    print self.data.lookup_table
                 if argument in self.data.lookup_table:
                     value = self.data.lookup_table[argument]
                     value = int(value) - (self.address + 1) if instruction_info["relative"] else int(value)

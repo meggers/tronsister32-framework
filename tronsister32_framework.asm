@@ -46,7 +46,7 @@ oam_copy: .space 64
 #   5(sf): starting oam slot        #
 #                                   #
 #####################################
-load_sprite_img:                    #
+load_sprite_img: nop                #
     pop $t0                         # t0 = sprite index
     pop $t1                         # t1 = sprite height
     pop $t2                         # t2 = sprite width
@@ -59,15 +59,15 @@ load_sprite_img:                    #
     add $t8,$zero,$t0               # t8 = t0 ; current sprite index
                                     #
     li $t9,oam_copy                 # get oam mem_copy start location in memory
-    add $t9,$t9,t5                  # increment mem oam index to starting index
+    add $t9,$t9,$t5                 # increment mem oam index to starting index
                                     #
     li $t10,0                       # initialize sprite register data to 0
                                     #
-    load_sprite_oloop:              #
+    load_sprite_oloop: nop          #
         sub $zero,$t1,$t6           #
         beq load_sprite_return      #
                                     #
-        load_sprite_iloop:          #
+        load_sprite_iloop: nop      #
             sub $zero,$t2,$t7       #
             beq rst_sprite_iloop    #
                                     #
@@ -91,18 +91,18 @@ load_sprite_img:                    #
             sld $t5,$t10            # load the sprite data to oam
             lw $10,$t9              # load the sprite data to mem oam
                                     #
-            addi $t5,1              # increment current oam slot
-            addi $t9,1              # increment current mem oam slot
-            addi $t8,1              # increment current sprite index
-            addi $t7,1              # increment inner loop index
+            addi $t5,$t5,1          # increment current oam slot
+            addi $t9,$t5,1          # increment current mem oam slot
+            addi $t8,$t5,1          # increment current sprite index
+            addi $t7,$t5,1          # increment inner loop index
             b load_sprite_iloop     #
                                     #
-        rst_sprite_iloop:           #
+        rst_sprite_iloop: nop       #
             li $t7,0                # reset inner loop index
-            addi $t6,1              # increment outer loop index
+            addi $t6,$t6,1          # increment outer loop index
             b load_sprite_oloop     # 
                                     #
-    load_sprite_return:             #
+    load_sprite_return: nop         #
         ret                         #
 #####################################
 
@@ -134,7 +134,7 @@ load_sprite_img:                    #
 #   $v0 - x value
 #
 #######################################################
-get_x:
+get_x: nop $0,$0,$0
     srl $v0,$a0,24
     ret
 
@@ -149,7 +149,7 @@ get_x:
 #   $v0 - SRL data with new x
 #
 #####################################################
-set_x:
+set_x: nop $0,$0,$0
     lw $t0,x_mask
     nand $t0,$t0,$t0
     and $v0,$a0,$t0
@@ -167,7 +167,7 @@ set_x:
 #   $v0 - y value
 #
 #######################################################
-get_y:
+get_y: nop $0,$0,$0
     lw $v0,y_mask
     and $v0,$a0,$v0
     ret
@@ -183,7 +183,7 @@ get_y:
 #   $v0 - SRL data with new y
 #
 #####################################################
-set_y:
+set_y: nop $0,$0,$0
     lw $t0,y_mask
     and $t1,$t0,$a1
     nand $t0,$t0,$t0
@@ -201,7 +201,7 @@ set_y:
 #   $v0 - tile number
 #
 #######################################################
-get_tile_no:
+get_tile_no: nop $0,$0,$0
     lw $t0,sprite_index_mask
     and $v0,$a0,$t0
     srl $v0,$v0,16
@@ -218,7 +218,7 @@ get_tile_no:
 #   $v0 - S.R.L. data with new tile number
 #
 #######################################################
-set_tile_no:
+set_tile_no: nop $0,$0,$0
     lw $t0,sprite_index_mask
     nand $t0,$t0,$t0
     and $v0,$t0,$a0
@@ -236,7 +236,7 @@ set_tile_no:
 #   $v0 - vertical flip
 #
 #######################################################
-get_v_flip:
+get_v_flip: nop $0,$0,$0
     lw $t0,vertical_flip_mask
     and $v0,$a0,$t0
     srl $v0,$v0,15
@@ -253,7 +253,7 @@ get_v_flip:
 #   $v0 - S.R.L. data with vertical flip
 #
 #######################################################
-set_v_flip:
+set_v_flip: nop $0,$0,$0
     lw $t0,vertical_flip_mask
     nand $t0,$t0,$t0
     and $v0,$a0,$t0
@@ -271,7 +271,7 @@ set_v_flip:
 #   $v0 - horizontal flip
 #
 #######################################################
-get_h_flip:
+get_h_flip: nop $0,$0,$0
     lw $t0,horiz_flip_mask
     and $v0,$a0,$t0
     srl $v0,$v0,14
@@ -288,7 +288,7 @@ get_h_flip:
 #   $v0 - S.R.L. data with horizontal flip
 #
 #######################################################
-set_h_flip:
+set_h_flip: nop $0,$0,$0
     lw $t0,horiz_flip_mask
     nand $t0,$t0,$t0
     and $v0,$a0,$t0
@@ -306,7 +306,7 @@ set_h_flip:
 #   $v0 - color palette
 #
 #######################################################
-get_color_palette:
+get_color_palette: nop $0,$0,$0
     lw $t0,color_palette_mask
     and $v0,$a0,$t0
     srl $v0,$v0,8
@@ -323,7 +323,7 @@ get_color_palette:
 #   $v0 - S.R.L. data with new color palette
 #
 #######################################################
-set_color_palette:
+set_color_palette: nop $0,$0,$0
     lw $t0,color_palette_mask
     nand $t0,$t0,$t0
     and $v0,$a0,$t0
@@ -344,19 +344,19 @@ set_color_palette:
 ##########################################################################################################################
 
 # handle game tick interrupt
-game_tick_interrupt:    
+game_tick_interrupt: nop $0,$0,$0
     nop $zero,$zero,$zero
-    j $epc
+    jr $epc
 
 # handle keyboard interrupt 
-keyboard_interrupt:     
+keyboard_interrupt: nop $0,$0,$0
     nop $zero,$zero,$zero
-    j $epc
+    jr $epc
                         
 # handle stack overflow interrupt
-stack_ov_interrupt:
+stack_ov_interrupt: nop $0,$0,$0
     nop $zero,$zero,$zero
-    j $epc
+    jr $epc
 
 ##########################################################################################################################
 #  _____ _            _____          _                                                                                   #

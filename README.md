@@ -10,7 +10,9 @@ Game folders should follow form of:
 ```
 game_folder/
     main.asm
+    build/
     assets/
+        color_palette.csv
         font/
             main.ttf
         foreground/

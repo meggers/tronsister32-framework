@@ -94,7 +94,7 @@ def assemble(instructions):
 def dump(assembly, game_directory):
     global data
 
-    output = open(game_directory + '/build/main.coe', 'w')
+    output = open(game_directory + 'build/main.coe', 'w')
     output.truncate()
     output.write("memory_initialization_radix=16;\nmemory_initialization_vector=\n")
     output.write(",\n".join(assembly))

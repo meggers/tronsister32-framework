@@ -1,0 +1,3 @@
+[submodule "tronsister32-pong"]
+	path = tronsister32-pong
+	url = https://github.com/meggers/tronsister32-pong.git

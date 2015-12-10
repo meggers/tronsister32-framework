@@ -54,6 +54,7 @@ b game_instructions
 #                                   #
 #####################################
 move_sprite_img: nop                #
+    pop $ra                         #
     pop $t0                         # t0 = starting oam slot
     pop $t1                         # t1 = delta x
     pop $t2                         # t2 = delta y
@@ -103,6 +104,7 @@ move_sprite_img: nop                #
         b move_sprite_img_loop      # 
                                     #
     move_sprite_img_ret: nop        #
+        push $ra
         ret                         #
 #####################################
 
@@ -125,6 +127,7 @@ move_sprite_img: nop                #
 #                                   #
 #####################################
 load_sprite_img: nop                #
+    pop $ra                         #
     pop $t0                         # t0 = sprite index
     pop $t1                         # t1 = sprite height
     pop $t2                         # t2 = sprite width
@@ -149,7 +152,7 @@ load_sprite_img: nop                #
             sub $zero,$t2,$t7       #
             beq rst_sprite_iloop    #
                                     #
-            add $a0,$zero,$10       # set current sprite data into first argument
+            add $a0,$zero,$t10      # set current sprite data into first argument
             add $a1,$zero,$t8       # set current sprite index number into second argument
             call set_tile_no        #
                                     #
@@ -165,14 +168,14 @@ load_sprite_img: nop                #
             add $a1,$a1,$t4         # add y offset to initial top coordinate as second argument
             call set_y              #
                                     #
-            add $10,$zero,$v0       # get chained results from above functions
+            add $t10,$zero,$v0      # get chained results from above functions
             sld $t5,$t10            # load the sprite data to oam
-            sw $10,$t9,0            # load the sprite data to mem oam
+            sw $t10,$t9,0           # load the sprite data to mem oam
                                     #
             addi $t5,$t5,1          # increment current oam slot
-            addi $t9,$t5,1          # increment current mem oam slot
-            addi $t8,$t5,1          # increment current sprite index
-            addi $t7,$t5,1          # increment inner loop index
+            addi $t9,$t9,1          # increment current mem oam slot
+            addi $t8,$t8,1          # increment current sprite index
+            addi $t7,$t7,1          # increment inner loop index
             b load_sprite_iloop     #
                                     #
         rst_sprite_iloop: nop       #
@@ -182,6 +185,7 @@ load_sprite_img: nop                #
                                     #
     load_sprite_return: nop         #
         add $v0,$0,$t5              #
+        push $ra                    #
         ret                         #
 #####################################
 
@@ -229,11 +233,13 @@ get_x: nop
 #
 #####################################################
 set_x: nop
+    push $t0
     lw $t0,$0,x_mask
     nand $t0,$t0,$t0
     and $v0,$a0,$t0
     sll $a1,$a1,24
     xor $v0,$v0,$a1
+    pop $t0
     ret
 
 #######################################################
@@ -263,11 +269,15 @@ get_y: nop
 #
 #####################################################
 set_y: nop
+    push $t0
+    push $t1
     lw $t0,$0,y_mask
     and $t1,$t0,$a1
     nand $t0,$t0,$t0
     and $v0,$a0,$t0
     xor $v0,$v0,$t1
+    pop $t1
+    pop $t0
     ret
 
 #######################################################
@@ -281,9 +291,11 @@ set_y: nop
 #
 #######################################################
 get_tile_no: nop
+    push $t0
     lw $t0,$0,sprite_index_mask
     and $v0,$a0,$t0
     srl $v0,$v0,16
+    pop $t0
     ret
 
 #######################################################
@@ -298,11 +310,13 @@ get_tile_no: nop
 #
 #######################################################
 set_tile_no: nop
+    push $t0
     lw $t0,$0,sprite_index_mask
     nand $t0,$t0,$t0
     and $v0,$t0,$a0
     sll $a1,$a1,16
     xor $v0,$v0,$a1
+    pop $t0
     ret
 
 #######################################################
@@ -316,9 +330,11 @@ set_tile_no: nop
 #
 #######################################################
 get_v_flip: nop
+    push $t0
     lw $t0,$0,vertical_flip_mask
     and $v0,$a0,$t0
     srl $v0,$v0,15
+    pop $t0
     ret
 
 #######################################################
@@ -333,11 +349,13 @@ get_v_flip: nop
 #
 #######################################################
 set_v_flip: nop
+    push $t0
     lw $t0,$0,vertical_flip_mask
     nand $t0,$t0,$t0
     and $v0,$a0,$t0
     sll $a1,$a1,15
     xor $v0,$v0,$a1
+    pop $t0
     ret
 
 #######################################################
@@ -351,9 +369,11 @@ set_v_flip: nop
 #
 #######################################################
 get_h_flip: nop
+    push $t0
     lw $t0,$0,horiz_flip_mask
     and $v0,$a0,$t0
     srl $v0,$v0,14
+    pop $t0
     ret
 
 #######################################################
@@ -368,11 +388,13 @@ get_h_flip: nop
 #
 #######################################################
 set_h_flip: nop
+    push $t0
     lw $t0,$0,horiz_flip_mask
     nand $t0,$t0,$t0
     and $v0,$a0,$t0
     sll $a1,$a1,14
     xor $v0,$v0,$a1
+    pop $t0
     ret
 
 #######################################################
@@ -386,9 +408,11 @@ set_h_flip: nop
 #
 #######################################################
 get_color_palette: nop
+    push $t0
     lw $t0,$0,color_palette_mask
     and $v0,$a0,$t0
     srl $v0,$v0,8
+    pop $t0
     ret
 
 #######################################################
@@ -403,11 +427,13 @@ get_color_palette: nop
 #
 #######################################################
 set_color_palette: nop
+    push $t0
     lw $t0,$0,color_palette_mask
     nand $t0,$t0,$t0
     and $v0,$a0,$t0
     sll $a1,$a1,8
     xor $v0,$v0,$a1
+    pop $t0
     ret
 
 game_instructions: nop

@@ -1,3 +1,6 @@
 [submodule "tronsister32-pong"]
 	path = tronsister32-pong
 	url = https://github.com/meggers/tronsister32-pong.git
+[submodule "tronsister32-example"]
+	path = tronsister32-example
+	url = https://github.com/meggers/tronsister32-example.git

@@ -79,6 +79,7 @@ class DataWarehouse(object):
                 self.lookup_table[sprite_parts[0] + "_index"]  = sprite_parts[1]
                 self.lookup_table[sprite_parts[0] + "_height"] = sprite_parts[2]
                 self.lookup_table[sprite_parts[0] + "_width"]  = sprite_parts[3]
+                self.lookup_table[sprite_parts[0] + "_size"]   = sprite_parts[4]
 
         with open(self.clr_file) as f:
             lines = f.readlines()

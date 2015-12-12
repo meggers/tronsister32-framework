@@ -60,7 +60,10 @@ def main(game_directory):
             sprites = sprites + blockshaped(pixels, sprite_size, sprite_size).tolist()
 
             # save off sprite names for csv dump used by assembler
-            sprite_parts.append("{0},{1},{2},{3}".format(image_file.split('.')[0], sprite_index, pixel_height / sprite_size, pixel_width / sprite_size))
+            spr_height = pixel_height / sprite_size
+            spr_width = pixel_width / sprite_size
+            spr_size = spr_height * spr_width
+            sprite_parts.append("{0},{1},{2},{3},{4}".format(image_file.split('.')[0], sprite_index, spr_height, spr_width, spr_size))
             sprite_index += (pixel_height / sprite_size) * (pixel_width / sprite_size)
 
         sprite_memory = []
@@ -97,7 +100,7 @@ def main(game_directory):
 
     output = open("common/sprite-definitions.csv", 'w')
     output.truncate()
-    output.write("name,index,height,width\n")
+    output.write("name,index,height,width,size\n")
     output.write("\n".join(sprite_parts))
     output.close()
 

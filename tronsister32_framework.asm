@@ -119,11 +119,11 @@ check_collision: nop                #
     beq cc_return_true              #
                                     #
     cc_return_true: nop             # otherwise, intersection
-        addi $v0,$0,TRUE            #
+        lw $v0,$0,TRUE              #
         b cc_return                 #
                                     #
     cc_return_false: nop            #
-        addi $v0,$0,FALSE           #
+        lw $v0,$0,FALSE             #
         b cc_return                 #
                                     #
     cc_return: nop                  #
@@ -140,8 +140,9 @@ check_collision: nop                #
 #                                   #
 # Arguments:                        #
 #   0(sf): starting oam slot        #
-#   1(sf): x delta                  #
-#   2(sf): y delta                  #
+#   1(sf): sprite_size              #
+#   2(sf): x delta                  #
+#   3(sf): y delta                  #
 #                                   #
 # Returns:                          #
 #   0(sf) - top                     #
@@ -153,6 +154,7 @@ check_collision: nop                #
 move_sprite_img: nop                #
     pop $ra                         #
     pop $t0                         # t0 = starting oam slot
+    pop $t4                         # t4 = sprite size
     pop $t1                         # t1 = delta x
     pop $t2                         # t2 = delta y
                                     #
@@ -160,15 +162,11 @@ move_sprite_img: nop                #
     add $t3,$t3,$t0                 # t3 = mem_oam start + oam offset
     lw $t6,$t3,0                    # t6 = data at t3
                                     #
-    lw $a0,$t3,0                    # pass sprite data as argument
-    call get_tile_no                #
-    add $t4,$0,$v0                  # get sprite number we're looking for
-                                    #
-    add $t5,$0,$t4                  # initialize loop sprite to sprite we're looking for
+    add $t5,$0,$0                   # initialize loop var to 0
                                     #
     move_sprite_img_loop: nop       #
         sub $0,$t4,$t5              #
-        bne move_sprite_img_ret     #
+        beq move_sprite_img_ret     #
                                     #
         add $a0,$0,$t6              # pass sprite data as argument
         call get_x                  # grab x
@@ -195,9 +193,7 @@ move_sprite_img: nop                #
                                     #
         lw $t6,$t3,0                # if we don't then get sprite data
                                     #
-        add $a0,$0,$t6              # pass sprite data as an argument
-        call get_tile_no            # get tile number
-        add $t5,$0,$v0              # set tile numer
+        addi $t5,$t5,1              # increment sprite index
         b move_sprite_img_loop      # 
                                     #
     move_sprite_img_ret: nop        #

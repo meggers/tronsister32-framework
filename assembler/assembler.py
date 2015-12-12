@@ -123,7 +123,7 @@ def main((game_directory, framework)):
     instructions = fw_instructions + game_instructions
     interrupts = fw_interrupts + game_interrupts
     heap = fw_heap + game_heap
-    stack = [Line() for _ in range(data.end_of_memory - data.stack_address + 1)]
+    stack = [Line(value="00000000") for _ in range(data.end_of_memory - data.stack_address + 1)]
 
     # check for required interrupts
     if len(interrupts) != interrupt_count:
@@ -140,7 +140,7 @@ def main((game_directory, framework)):
     # pad data section
     heap_end = data.heap_address + len(heap)
     for _ in range(heap_end, data.heap_end + 1):
-        heap.append(Line())
+        heap.append(Line(value="00000000"))
 
     # generate memory and check for correct length
     program = instructions + interrupts + heap + stack

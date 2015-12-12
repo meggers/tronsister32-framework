@@ -28,11 +28,89 @@ color_palette_mask: .word 0x00000300
 y_mask:             .word 0x000000FF
 clear_sprite:       .word 0xFFFFFFFF
 
+TRUE:               .word 0xFFFFFFFF
+FALSE:              .word 0x00000000
+
 oam_copy: .space 64
 
 .text
 
 b game_instructions
+
+#####################################
+#                                   #
+# Function: check_collision         #
+#                                   #
+# Arguments:                        #
+#   0(sf): sprite a start oam data  #
+#   1(sf): sprite b start oam data  #
+#   2(sf): height a                 #
+#   3(sf): height b                 #
+#   4(sf): width a                  #
+#   5(sf): width b                  #
+#                                   #
+# Return:                           #
+#   $v0: TRUE if collision          #
+#        FALSE if no collision      #
+#                                   #
+#####################################
+check_collision: nop                #
+    pop $ra                         #
+    pop $t0                         # $t0 = sprite a start oam data
+    pop $t1                         # $t1 = sprite b start oam data
+    pop $t2                         # $t2 = height a
+    pop $t3                         # $t3 = height b
+    pop $t4                         # $t4 = width a
+    pop $t5                         # $t5 = width b
+                                    #
+    add $a0,$0,$t0                  #
+    call get_x                      #
+    add $t6,$0,$v0                  # $t6 = left of sprite a
+                                    #
+    add $a0,$0,$t0                  #
+    call get_y                      #
+    add $t7,$0,$v0                  # $t7 = top of sprite a
+                                    #
+    add $a0,$0,$t1                  #
+    call get_x                      #
+    add $t8,$0,$v0                  # $t8 = left of sprite b
+                                    #
+    add $a0,$0,$t1                  #
+    call get_y                      #
+    add $t9,$0,$v0                  # $t9 = top of sprite b
+                                    #
+    add $t0,$t6,$t4                 # if ax + aw < bx then no intersection       
+    sub $0,$t8,$t0                  #
+    blt cc_return_false             #
+    beq cc_return_true              #
+                                    #
+    add $t0,$t8,$t5                 # if bx + bw < ax then no intersection
+    sub $0,$t6,$t0                  #
+    blt cc_return_false             #
+    beq cc_return_true              #
+                                    #
+    add $t0,$t7,$t2                 # if ay + ah < by then no intersection
+    sub $0,$t9,$t0                  #
+    blt cc_return_false             #
+    beq cc_return_true              #
+                                    #
+    add $t0,$t9,$t3                 # if by + bh < ay then no intersection
+    sub $0,$t7,$t0                  #
+    blt cc_return_false             #
+    beq cc_return_true              #
+                                    #
+    cc_return_true: nop             # otherwise, intersection
+        addi $v0,$0,TRUE            #
+        b cc_return                 #
+                                    #
+    cc_return_false: nop            #
+        addi $v0,$0,FALSE           #
+        b cc_return                 #
+                                    #
+    cc_return:                      #
+        push $ra                    #
+        ret                         #
+#####################################
 
 #####################################
 #                                   #
@@ -104,7 +182,7 @@ move_sprite_img: nop                #
         b move_sprite_img_loop      # 
                                     #
     move_sprite_img_ret: nop        #
-        push $ra
+        push $ra                    #
         ret                         #
 #####################################
 

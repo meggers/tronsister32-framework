@@ -48,12 +48,13 @@ b game_instructions
 #   $v0: negates number             #
 #                                   #
 #####################################
-negate:
-    pop $ra
-    nand $a0,$a0,$a0
-    add $v0,$a0,1
-    push $ra
-    ret
+negate: nop                         #
+    pop $ra                         #
+    nand $a0,$a0,$a0                #
+    add $v0,$a0,1                   #
+    push $ra                        #
+    ret                             #
+#####################################
 
 #####################################
 #                                   #
@@ -125,7 +126,7 @@ check_collision: nop                #
         addi $v0,$0,FALSE           #
         b cc_return                 #
                                     #
-    cc_return:                      #
+    cc_return: nop                  #
         push $ra                    #
         ret                         #
 #####################################

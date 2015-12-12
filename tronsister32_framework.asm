@@ -39,6 +39,24 @@ b game_instructions
 
 #####################################
 #                                   #
+# Function: negate                  #
+#                                   #
+# Arguments:                        #
+#   $a0: number to negate           #
+#                                   #
+# Return:                           #
+#   $v0: negates number             #
+#                                   #
+#####################################
+negate:
+    pop $ra
+    nand $a0,$a0,$a0
+    add $v0,$a0,1
+    push $ra
+    ret
+
+#####################################
+#                                   #
 # Function: check_collision         #
 #                                   #
 # Arguments:                        #

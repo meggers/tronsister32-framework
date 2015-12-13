@@ -21,10 +21,10 @@
 .data
 
 x_mask:             .word 0xFF000000
-sprite_index_mask:  .word 0x00FF0000
-vertical_flip_mask: .word 0x00008000
-horiz_flip_mask:    .word 0x00004000
-color_palette_mask: .word 0x00000300
+sprite_index_mask:  .word 0x0000FF00
+vertical_flip_mask: .word 0x00800000
+horiz_flip_mask:    .word 0x00400000
+color_palette_mask: .word 0x00030000
 y_mask:             .word 0x000000FF
 clear_sprite:       .word 0xFFFFFFFF
 
@@ -457,7 +457,7 @@ get_tile_no: nop
     push $t0
     lw $t0,$0,sprite_index_mask
     and $v0,$a0,$t0
-    srl $v0,$v0,16
+    srl $v0,$v0,8
     pop $t0
     ret
 
@@ -477,7 +477,7 @@ set_tile_no: nop
     lw $t0,$0,sprite_index_mask
     nand $t0,$t0,$t0
     and $v0,$t0,$a0
-    sll $a1,$a1,16
+    sll $a1,$a1,8
     xor $v0,$v0,$a1
     pop $t0
     ret
@@ -496,7 +496,7 @@ get_v_flip: nop
     push $t0
     lw $t0,$0,vertical_flip_mask
     and $v0,$a0,$t0
-    srl $v0,$v0,15
+    srl $v0,$v0,23
     pop $t0
     ret
 
@@ -516,7 +516,7 @@ set_v_flip: nop
     lw $t0,$0,vertical_flip_mask
     nand $t0,$t0,$t0
     and $v0,$a0,$t0
-    sll $a1,$a1,15
+    sll $a1,$a1,23
     xor $v0,$v0,$a1
     pop $t0
     ret
@@ -535,7 +535,7 @@ get_h_flip: nop
     push $t0
     lw $t0,$0,horiz_flip_mask
     and $v0,$a0,$t0
-    srl $v0,$v0,14
+    srl $v0,$v0,22
     pop $t0
     ret
 
@@ -555,7 +555,7 @@ set_h_flip: nop
     lw $t0,$0,horiz_flip_mask
     nand $t0,$t0,$t0
     and $v0,$a0,$t0
-    sll $a1,$a1,14
+    sll $a1,$a1,22
     xor $v0,$v0,$a1
     pop $t0
     ret
@@ -574,7 +574,7 @@ get_color_palette: nop
     push $t0
     lw $t0,$0,color_palette_mask
     and $v0,$a0,$t0
-    srl $v0,$v0,8
+    srl $v0,$v0,16
     pop $t0
     ret
 
@@ -594,7 +594,7 @@ set_color_palette: nop
     lw $t0,$0,color_palette_mask
     nand $t0,$t0,$t0
     and $v0,$a0,$t0
-    sll $a1,$a1,8
+    sll $a1,$a1,16
     xor $v0,$v0,$a1
     pop $t0
     ret

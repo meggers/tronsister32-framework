@@ -237,6 +237,7 @@ move_sprite_img: nop                #
     move_sprite_img_loop: nop       #
         sub $0,$t4,$t5              #
         beq move_sprite_img_ret     #
+        blt move_sprite_img_ret     #
                                     #
         add $a0,$0,$t6              # pass sprite data as argument
         call get_x                  # grab x

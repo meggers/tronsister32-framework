@@ -133,12 +133,14 @@ def main((game_directory, framework)):
         sys.exit(1)
 
     # pad instruction section
+    print "Your program has {} instructions.".format(len(instructions))
     instructions_end = data.instructions_address + len(instructions)
     for _ in range(instructions_end, data.instructions_end + 1):
         instructions.append(Line())
 
     # pad data section
     heap_end = data.heap_address + len(heap)
+    print "Your program has {} heap entries.".format(len(heap))
     for _ in range(heap_end, data.heap_end + 1):
         heap.append(Line(value="00000000"))
 

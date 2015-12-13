@@ -26,12 +26,12 @@ def main(game_directory):
 
     image_path = game_directory + 'assets/'
 
-    sprite_parts = []
+    sprite_parts = [ "clear,0,1,1,1" ]
     for i, image_folder in enumerate([image_path + folder for folder in image_folders]):
         image_files = [ f for f in listdir(image_folder) if isfile(join(image_folder,f)) ]
 
         sprites = []
-        sprite_index = 0
+        sprite_index = 1 if "background" in image_folder else 0
         for image_file in image_files:
             im = Image.open(image_folder + image_file)
             pixel_width, pixel_height = im.size
@@ -66,7 +66,7 @@ def main(game_directory):
             sprite_parts.append("{0},{1},{2},{3},{4}".format(image_file.split('.')[0], sprite_index, spr_height, spr_width, spr_size))
             sprite_index += (pixel_height / sprite_size) * (pixel_width / sprite_size)
 
-        sprite_memory = []
+        sprite_memory = [ "0000000000000000" for x in range(8) ]
         for sprite in sprites:
             for line in sprite:
 

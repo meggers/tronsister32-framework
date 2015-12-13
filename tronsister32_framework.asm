@@ -148,6 +148,11 @@ check_collision: nop                #
     pop $t4                         # $t4 = width a
     pop $t5                         # $t5 = width b
                                     #
+    sll $t2,$t2,3                   # turn sprite widths to pixel widths
+    sll $t3,$t3,3                   #
+    sll $t4,$t4,3                   #
+    sll $t5,$t5,3                   #
+                                    #
     add $a0,$0,$t0                  #
     call get_x                      #
     add $t6,$0,$v0                  # $t6 = left of sprite a
@@ -165,22 +170,22 @@ check_collision: nop                #
     add $t9,$0,$v0                  # $t9 = top of sprite b
                                     #
     add $t0,$t6,$t4                 # if ax + aw < bx then no intersection       
-    sub $0,$t8,$t0                  #
+    sub $0,$t0,$t8                  #
     blt cc_return_false             #
     beq cc_return_true              #
                                     #
     add $t0,$t8,$t5                 # if bx + bw < ax then no intersection
-    sub $0,$t6,$t0                  #
+    sub $0,$t0,$t6                  #
     blt cc_return_false             #
     beq cc_return_true              #
                                     #
     add $t0,$t7,$t2                 # if ay + ah < by then no intersection
-    sub $0,$t9,$t0                  #
+    sub $0,$t0,$t9                  #
     blt cc_return_false             #
     beq cc_return_true              #
                                     #
     add $t0,$t9,$t3                 # if by + bh < ay then no intersection
-    sub $0,$t7,$t0                  #
+    sub $0,$t0,$t7                  #
     blt cc_return_false             #
     beq cc_return_true              #
                                     #
@@ -238,12 +243,13 @@ move_sprite_img: nop                #
                                     #
         add $a0,$0,$t6              # pass sprite data as argument
         add $a1,$t1,$v0             # pass x + delta_x as offset
-        call set_x                  # get resulting sprite data
+        call set_x                  # 
+        add $t6,$0,$v0              #
                                     #
         add $a0,$0,$v0              # pass sprite data as argument
         call get_y                  # grab y
                                     #
-        add $a0,$a0,$t6             # pass sprite data as argument
+        add $a0,$0,$t6              # pass sprite data as argument
         add $a1,$t2,$v0             # pass y + delta_y as offset
         call set_y                  # get resulting sprite data
                                     #

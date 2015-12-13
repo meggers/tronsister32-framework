@@ -39,6 +39,73 @@ b game_instructions
 
 #####################################
 #                                   #
+# Function: check_oob               #
+#                                   #
+# Arguments:                        #
+#   0(sf): left sprite x pos        #
+#   1(sf): top sprite y pos         #
+#   2(sf): sprite width             #
+#   3(sf): sprite height            #
+#                                   #
+# Return:                           #
+#   $v0: 0000 if not oob            #
+#        0001 if top                #
+#        0010 if right              #
+#        0100 if bottom             #
+#        1000 if left               #
+#        0011 if top right          #
+#        1001 if top left           #
+#        0110 if bottom right       #
+#        1100 if bottom left        #
+#                                   #
+#####################################
+check_oob: nop                      #
+    pop $ra                         #
+    pop $t0                         # t0 = sprite height
+    pop $t1                         # t1 = sprite width
+    pop $t2                         # t2 = top sprite y pos
+    pop $t3                         # t3 = left sprite x pos
+                                    #
+    li $v0,0                        # zero out return value
+                                    #
+    oob_check_top: nop              # check if sprite extends over top
+        sub $0,$t2,$0               # 
+        blt oob_check_bottom        #
+                                    #
+        li $t4,1                    #
+        xor $v0,$v0,$t4             #
+                                    #
+    oob_check_bottom: nop           # check if sprite extends over bottom
+        add $t4,$t2,$t0             #
+        li $t5,256                  #
+        sub $0,$t4,$t5              #
+        blt oob_check_left          #
+                                    #
+        li $t4,4                    #
+        xor $v0,$v0,$t4             #
+                                    #
+    oob_check_left: nop             # check if sprite extends over left
+        sub $0,$t3,$0               #
+        blt oob_check_right         #
+                                    #
+        li $t4,8                    #
+        xor $v0,$v0,$t4             #
+                                    #
+    oob_check_right: nop            # check if sprite extends over right
+        add $t4,$t3,$t1             #
+        li $t5,256                  #
+        sub $0,$t4,$t5              #
+        blt check_oob_return        #
+                                    #
+        li $t4,2                    #
+        xor $v0,$v0,$t4             #
+                                    #
+    check_oob_return: nop           #
+        jr $ra                      #
+#####################################
+
+#####################################
+#                                   #
 # Function: negate                  #
 #                                   #
 # Arguments:                        #
@@ -52,8 +119,7 @@ negate: nop                         #
     pop $ra                         #
     nand $a0,$a0,$a0                #
     add $v0,$a0,1                   #
-    push $ra                        #
-    ret                             #
+    jr $ra                          #
 #####################################
 
 #####################################
@@ -127,8 +193,7 @@ check_collision: nop                #
         b cc_return                 #
                                     #
     cc_return: nop                  #
-        push $ra                    #
-        ret                         #
+        jr $ra                      #
 #####################################
 
 #####################################
@@ -197,8 +262,7 @@ move_sprite_img: nop                #
         b move_sprite_img_loop      # 
                                     #
     move_sprite_img_ret: nop        #
-        push $ra                    #
-        ret                         #
+        jr $ra                      #
 #####################################
 
 #####################################
@@ -278,8 +342,7 @@ load_sprite_img: nop                #
                                     #
     load_sprite_return: nop         #
         add $v0,$0,$t5              #
-        push $ra                    #
-        ret                         #
+        jr $ra                      #
 #####################################
 
 ##########################################################################################################################

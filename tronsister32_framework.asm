@@ -187,9 +187,11 @@ check_oob: nop                      #
     pop $t3                         # t3 = left sprite x pos
                                     #
     li $v0,0                        # zero out return value
+    sll $t0,$t0,3                   # sprite height -> pixel height
+    sll $t1,$t1,3                   # sprite width -> pixel width
                                     #
     oob_check_top: nop              # check if sprite extends over top
-        sub $0,$t2,$0               # 
+        sub $0,$0,$t2               # 
         blt oob_check_bottom        #
                                     #
         li $t4,1                    #
@@ -205,7 +207,7 @@ check_oob: nop                      #
         xor $v0,$v0,$t4             #
                                     #
     oob_check_left: nop             # check if sprite extends over left
-        sub $0,$t3,$0               #
+        sub $0,$0,$t3               #
         blt oob_check_right         #
                                     #
         li $t4,8                    #
@@ -268,7 +270,7 @@ check_collision: nop                #
     pop $t4                         # $t4 = width a
     pop $t5                         # $t5 = width b
                                     #
-    sll $t2,$t2,3                   # turn sprite widths to pixel widths
+    sll $t2,$t2,3                   # turn sprite sizes to pixel sizes
     sll $t3,$t3,3                   #
     sll $t4,$t4,3                   #
     sll $t5,$t5,3                   #

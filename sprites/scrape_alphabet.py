@@ -9,7 +9,7 @@ def main(game_directory):
     global alphabet, numbers
 
     for character in alphabet + numbers:# + symbols:
-        os.system('convert -background black -fill white -font {0}assets/font/main.ttf -pointsize 8 label:"{1}" {0}assets/font/{1}.png'.format(game_directory, character))
+        os.system('convert -background "rgb(0,0,0)" -fill "rgb(255,0,0)" -font {0}assets/font/main.ttf -pointsize 8 label:"{1}" {0}assets/font/{1}.png'.format(game_directory, character))
         im = Image.open("{0}assets/font/{1}.png".format(game_directory, character))
         cropped = im.crop((0, 2, 8, 10))
         cropped.save("{0}assets/background/char_{1}.png".format(game_directory, character), "PNG")

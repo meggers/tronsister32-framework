@@ -151,7 +151,7 @@ display_2digit_decimal: nop         #
         call draw_number            #
                                     #
         add $a0,$0,$t1              # pass ones digit
-        addi $a0,$a0,1              # increment bg position
+        addi $a1,$a1,1              # increment bg position
         call draw_number            #
                                     #
         ret                         #

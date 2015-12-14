@@ -155,6 +155,8 @@ display_2digit_decimal: nop         #
         call draw_number            #
                                     #
         nop                         # avoid hazard
+        nop                         #
+        nop                         #
                                     #
         ret                         #
 #####################################

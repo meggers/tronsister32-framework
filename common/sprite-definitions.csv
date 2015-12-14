@@ -1,7 +1,7 @@
 name,index,height,width,size
 clear,0,1,1,1
 ball,0,1,1,1
-paddle,1,3,1,3
+paddle,1,4,1,4
 char_1,1,1,1,1
 char_A,2,1,1,1
 char_G,3,1,1,1

@@ -39,6 +39,126 @@ b game_instructions
 
 #####################################
 #                                   #
+# Function: draw_number             #
+#                                   #
+# Arguments: draw_number            #
+#   $a0: number to draw             #
+#   $a1: background position        #
+#                                   #
+# Return:                           #
+#   N/A                             #
+#                                   #
+#####################################
+draw_number: nop                    #
+    push $t0                        #
+                                    #
+    addi $0,$a0,0                   #
+    beq dn_0                        #
+                                    #
+    addi $0,$a0,-1                  #
+    beq dn_1                        #
+                                    #
+    addi $0,$a0,-2                  #
+    beq dn_2                        #
+                                    #
+    addi $0,$a0,-3                  #
+    beq dn_3                        #
+                                    #
+    addi $0,$a0,-4                  #
+    beq dn_4                        #
+                                    #
+    addi $0,$a0,-5                  #
+    beq dn_5                        #
+                                    #
+    addi $0,$a0,-6                  #
+    beq dn_6                        #
+                                    #
+    addi $0,$a0,-7                  #
+    beq dn_7                        #
+                                    #
+    addi $0,$a0,-8                  #
+    beq dn_8                        #
+                                    #
+    addi $0,$a0,-9                  #
+    beq dn_9                        #
+                                    #
+    dn_0: nop                       #
+        li $t0,char_0               #
+        b draw_number_return        #
+    dn_1: nop                       #
+        li $t0,char_1               #
+        b draw_number_return        #
+    dn_2: nop                       #
+        li $t0,char_2               #
+        b draw_number_return        #
+    dn_3: nop                       #
+        li $t0,char_3               #
+        b draw_number_return        #
+    dn_4: nop                       #
+        li $t0,char_4               #
+        b draw_number_return        #
+    dn_5: nop                       #
+        li $t0,char_5               #
+        b draw_number_return        #
+    dn_6: nop                       #
+        li $t0,char_6               #
+        b draw_number_return        #
+    dn_7: nop                       #
+        li $t0,char_7               #
+        b draw_number_return        #
+    dn_8: nop                       #
+        li $t0,char_8               #
+        b draw_number_return        #
+    dn_9: nop                       #
+        li $t0,char_9               #
+        b draw_number_return        #
+                                    #
+    draw_number_return: nop         #
+        sbt $a1,$t0                 #
+        pop $t0                     #
+        ret                         #
+#####################################
+
+#####################################
+#                                   #
+# Function: display_2digit_decimal  #
+#                                   #
+# Arguments:                        #
+#   $a0: number to display          #
+#   $a1: bg position to display at  #
+#                                   #
+# Return:                           #
+#   N/A                             #
+#                                   #
+#####################################
+display_2digit_decimal: nop         #
+                                    #
+    li $t0,0                        # t0 = tens digit (init 0)
+    li $t1,10                       # t1 = down counter (10)
+                                    #
+    d2dd_loop: nop                  #
+        sub $0,$a0,$t1              # if remainder is < 10, breadk from loop
+        blt d2dd_return             #
+                                    #
+        sub $a0,$a0,$t1             # remainder = remainder - down counter
+        addi $t0,$t0,1              # increment tens digit
+        b d2dd_loop                 #
+                                    #
+    d2dd_return: nop                #
+        add $t1,$0,$a0              # grab remainder
+                                    #
+        add $a0,$0,$t0              # pass tens digit
+        call draw_number            #
+                                    #
+        add $a0,$0,$t1              # pass ones digit
+        addi $a0,$a0,1              # increment bg position
+        call draw_number            #
+                                    #
+        ret                         #
+#####################################
+
+#####################################
+#                                   #
 # Function: check_oob               #
 #                                   #
 # Arguments:                        #

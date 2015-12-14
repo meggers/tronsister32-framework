@@ -12,7 +12,7 @@ def main(game_directory):
         os.system('convert -background none -fill black -font {0}assets/font/main.ttf -pointsize 8 label:"{1}" {0}assets/font/{1}.png'.format(game_directory, character))
         im = Image.open("{0}assets/font/{1}.png".format(game_directory, character))
         cropped = im.crop((0, 2, 8, 10))
-        cropped.save("{0}assets/background/{1}.png".format(game_directory, character), "PNG")
+        cropped.save("{0}assets/background/char_{1}.png".format(game_directory, character), "PNG")
 
 # print standard usage msg & any addtl msgs, then exit
 def usage(exit_code, *args):

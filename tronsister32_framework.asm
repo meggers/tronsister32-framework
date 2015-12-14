@@ -83,34 +83,34 @@ draw_number: nop                    #
     beq dn_9                        #
                                     #
     dn_0: nop                       #
-        li $t0,char_0               #
+        li $t0,char_0_index         #
         b draw_number_return        #
     dn_1: nop                       #
-        li $t0,char_1               #
+        li $t0,char_1_index         #
         b draw_number_return        #
     dn_2: nop                       #
-        li $t0,char_2               #
+        li $t0,char_2_index         #
         b draw_number_return        #
     dn_3: nop                       #
-        li $t0,char_3               #
+        li $t0,char_3_index         #
         b draw_number_return        #
     dn_4: nop                       #
-        li $t0,char_4               #
+        li $t0,char_4_index         #
         b draw_number_return        #
     dn_5: nop                       #
-        li $t0,char_5               #
+        li $t0,char_5_index         #
         b draw_number_return        #
     dn_6: nop                       #
-        li $t0,char_6               #
+        li $t0,char_6_index         #
         b draw_number_return        #
     dn_7: nop                       #
-        li $t0,char_7               #
+        li $t0,char_7_index         #
         b draw_number_return        #
     dn_8: nop                       #
-        li $t0,char_8               #
+        li $t0,char_8_index         #
         b draw_number_return        #
     dn_9: nop                       #
-        li $t0,char_9               #
+        li $t0,char_9_index         #
         b draw_number_return        #
                                     #
     draw_number_return: nop         #

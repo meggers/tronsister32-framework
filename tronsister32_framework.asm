@@ -191,7 +191,8 @@ check_oob: nop                      #
     sll $t1,$t1,3                   # sprite width -> pixel width
                                     #
     oob_check_top: nop              # check if sprite extends over top
-        sub $0,$0,$t2               # 
+        li $t5,6                    #
+        sub $0,$t5,$t2              # 
         blt oob_check_bottom        #
                                     #
         li $t4,1                    #
@@ -199,7 +200,7 @@ check_oob: nop                      #
                                     #
     oob_check_bottom: nop           # check if sprite extends over bottom
         add $t4,$t2,$t0             #
-        li $t5,256                  #
+        li $t5,250                  #
         sub $0,$t4,$t5              #
         blt oob_check_left          #
                                     #
@@ -207,7 +208,8 @@ check_oob: nop                      #
         xor $v0,$v0,$t4             #
                                     #
     oob_check_left: nop             # check if sprite extends over left
-        sub $0,$0,$t3               #
+        li $t5,6                    #
+        sub $0,$t5,$t3              #
         blt oob_check_right         #
                                     #
         li $t4,8                    #
@@ -215,7 +217,7 @@ check_oob: nop                      #
                                     #
     oob_check_right: nop            # check if sprite extends over right
         add $t4,$t3,$t1             #
-        li $t5,256                  #
+        li $t5,250                  #
         sub $0,$t4,$t5              #
         blt check_oob_return        #
                                     #
@@ -294,22 +296,18 @@ check_collision: nop                #
     add $t0,$t6,$t4                 # if ax + aw < bx then no intersection       
     sub $0,$t0,$t8                  #
     blt cc_return_false             #
-    beq cc_return_true              #
                                     #
     add $t0,$t8,$t5                 # if bx + bw < ax then no intersection
     sub $0,$t0,$t6                  #
     blt cc_return_false             #
-    beq cc_return_true              #
                                     #
     add $t0,$t7,$t2                 # if ay + ah < by then no intersection
     sub $0,$t0,$t9                  #
     blt cc_return_false             #
-    beq cc_return_true              #
                                     #
     add $t0,$t9,$t3                 # if by + bh < ay then no intersection
     sub $0,$t0,$t7                  #
     blt cc_return_false             #
-    beq cc_return_true              #
                                     #
     cc_return_true: nop             # otherwise, intersection
         lw $v0,$0,TRUE              #

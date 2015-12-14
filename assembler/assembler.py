@@ -55,7 +55,7 @@ def read(program, start_instructions, start_heap):
         # data directive found, allocate space in data
         except DataDirective as directive:
             # make sure we have space for this data
-            byte_size = math.ceil(len(directive.value) / 2)
+            byte_size = math.ceil(len(directive.value) / 2) 
             allocated_end_address = current_address + byte_size
             if (allocated_end_address >= data.heap_end):
                 print "Data Overflow. Please use less data or allocate more space for it."

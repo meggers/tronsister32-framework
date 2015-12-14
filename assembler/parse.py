@@ -74,7 +74,7 @@ class Line(object):
         return value
 
     def _space(data):
-        return "00" * int(data)
+        return "00000000" * int(data)
 
     structure_directives = ['.text', '.data']
     data_directives = {

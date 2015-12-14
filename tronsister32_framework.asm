@@ -154,6 +154,8 @@ display_2digit_decimal: nop         #
         addi $a1,$a1,1              # increment bg position
         call draw_number            #
                                     #
+        nop                         # avoid hazard
+                                    #
         ret                         #
 #####################################
 

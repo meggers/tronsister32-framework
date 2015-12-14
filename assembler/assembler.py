@@ -73,9 +73,10 @@ def read(program, start_instructions, start_heap):
                     current_value = ""
 
             # set overflow value
-            overflow_length = len(current_value)
-            current_value = ("0" * (8 - overflow_length)) + current_value
-            heap.append(Line(None, None, current_value))
+            if len(current_value) != 0:
+                overflow_length = len(current_value)
+                current_value = ("0" * (8 - overflow_length)) + current_value
+                heap.append(Line(None, None, current_value))
 
         # instruction directive found, start writing in instruction section
         except StartInstructions:

@@ -18,7 +18,9 @@ colors = {
     (  0, 255,   0): (1,0),
     (  0,   0, 255): (1,1),
     (  0,   0): (0,0),
-    (  0, 255): (0,1)
+    (  0, 255): (0,1),
+       0: (0, 0),
+     255: (0, 1)
 }
 
 def main(game_directory):
@@ -51,7 +53,10 @@ def main(game_directory):
                 try:
                     pixels = np.array(im.getdata(), dtype=('int, int, int'))
                 except:
-                    pixels = np.array(im.getdata(), dtype=('int, int'))
+                    try:
+                        pixels = np.array(im.getdata(), dtype=('int, int'))
+                    except:
+                        pixels = np.array(im.getdata(), dtype=('int'))
 
             # unflatted array into image size
             pixels.shape = (pixel_height, pixel_width)
@@ -71,7 +76,7 @@ def main(game_directory):
             for line in sprite:
 
                 decomposed_bytes = ["",""]
-                for pixel in [tuple(p) for p in line]:
+                for pixel in line:
                     if pixel not in colors:
                         print "Invalid color found"
                         sys.exit(1)

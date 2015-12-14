@@ -35,6 +35,7 @@ oam_copy: .space 64
 
 .text
 
+nop # for graham
 b game_instructions
 
 #####################################
@@ -155,8 +156,6 @@ display_2digit_decimal: nop         #
         call draw_number            #
                                     #
         nop                         # avoid hazard
-        nop                         #
-        nop                         #
                                     #
         ret                         #
 #####################################
